@@ -7,6 +7,7 @@
 - **COMPLETE**: All SDK import paths fixed with .js extensions
 - **COMPLETE**: Production dependencies (tslib) properly configured
 - **COMPLETE**: MCP JSON-RPC communication protocol fixed (logger redirected to stderr)
+- **COMPLETE**: Docker mode JSON output with proper volume mounting and file handling
 - Initial project repository created
 - README.md with project overview in place
 - Memory Bank documentation established
@@ -72,16 +73,20 @@
    - [ ] Plugin development guide (future enhancement)
 
 ## Current Status
-- **Phase**: **PRODUCTION READY** - Full stdin MCP server implementation complete
+- **Phase**: **PRODUCTION READY** - Full stdin MCP server implementation complete with Docker mode fix
 - **Blockers**: None
 - **Next Action**: Documentation enhancement and optional features
 - **MCP Compatibility**: Verified with MCP Inspector
 - **Execution Modes**: Both compiled (dist/) and TypeScript (tsx/ts-node) working
+- **Docker Mode**: Fixed JSON output with volume mounting and proper file handling
 
 ## Known Issues
-- None - all tests passing, MCP communication protocol working correctly
+- None - all tests passing, MCP communication protocol working correctly, Docker mode JSON output fixed
 
 ## Recent Fixes
+- **CRITICAL**: Fixed Docker mode JSON output issue - added required `-output` parameter and volume mounting
+- **TECHNICAL**: Implemented shell command chaining for Docker JSON output with proper file cleanup  
+- **VERIFIED**: Docker mode now properly handles JSON format with volume mounting pattern
 - **CRITICAL**: Fixed MCP JSON-RPC communication by redirecting Winston logger from stdout to stderr
 - Fixed Jest configuration for TypeScript/CommonJS compatibility
 - Updated all imports to use CommonJS syntax
@@ -99,3 +104,4 @@
 - **2025-01-13**: **CRITICAL**: Added tslib as production dependency for compiled helpers
 - **2025-01-13**: **VERIFIED**: MCP Inspector integration confirms protocol compliance
 - **2025-01-13**: **CRITICAL FIX**: Resolved MCP communication issues - logger stdout pollution fixed
+- **2025-01-14**: **CRITICAL FIX**: Fixed Docker mode JSON output with volume mounting and proper file handling

@@ -62,14 +62,31 @@ export class NiktoService {
 
       if (config.niktoMode === 'docker') {
         const niktoArgs = this.buildNiktoArgs(options);
-        command = 'docker';
-        args = [
-          'run',
-          '--rm',
-          `--network=${config.dockerNetworkMode}`,
-          config.dockerImage,
-          ...niktoArgs
-        ];
+        
+        if (options.outputFormat === 'json') {
+          const tmpDir = process.env['TMPDIR'] || process.cwd();
+          const outputFile = `/tmp/nikto-scan-${scanId}.json`;
+          const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
+          
+          const updatedArgs = niktoArgs.map(arg => 
+            arg === '/tmp/nikto-scan.json' ? outputFile : arg
+          );
+          
+          command = 'sh';
+          args = [
+            '-c',
+            `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${updatedArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+          ];
+        } else {
+          command = 'docker';
+          args = [
+            'run',
+            '--rm',
+            `--network=${config.dockerNetworkMode}`,
+            config.dockerImage,
+            ...niktoArgs
+          ];
+        }
       } else {
         command = config.niktoBinary;
         args = this.buildNiktoArgs(options);
@@ -126,14 +143,33 @@ export class NiktoService {
 
     if (config.niktoMode === 'docker') {
       const niktoArgs = this.buildNiktoArgs(options);
-      command = 'docker';
-      args = [
-        'run',
-        '--rm',
-        `--network=${config.dockerNetworkMode}`,
-        config.dockerImage,
-        ...niktoArgs
-      ];
+      
+      if (options.outputFormat === 'json') {
+        // For JSON output in docker mode, use volume mounting and post-process
+        const tmpDir = process.env['TMPDIR'] || process.cwd();
+        const outputFile = `/tmp/nikto-scan-${scanId}.json`;
+        const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
+        
+        // Update nikto args to use the specific output file
+        const updatedArgs = niktoArgs.map(arg => 
+          arg === '/tmp/nikto-scan.json' ? outputFile : arg
+        );
+        
+        command = 'sh';
+        args = [
+          '-c',
+          `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${updatedArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+        ];
+      } else {
+        command = 'docker';
+        args = [
+          'run',
+          '--rm',
+          `--network=${config.dockerNetworkMode}`,
+          config.dockerImage,
+          ...niktoArgs
+        ];
+      }
     } else {
       command = config.niktoBinary;
       args = this.buildNiktoArgs(options);
@@ -207,9 +243,18 @@ export class NiktoService {
     const timeoutValue = options.timeout || config.defaultTimeout;
     args.push('-timeout', timeoutValue.toString());
 
-    // Output format
+    // Output format handling
     if (options.outputFormat === 'json') {
-      args.push('-Format', 'json');
+      if (config.niktoMode === 'docker') {
+        // In docker mode, we write to a temporary file inside the container
+        // The output will be captured via stdout/stderr instead
+        args.push('-Format', 'json');
+        args.push('-output', '/tmp/nikto-scan.json');
+      } else {
+        // In native mode, we can write to a temporary file
+        args.push('-Format', 'json');
+        args.push('-output', '/tmp/nikto-output.json');
+      }
     }
 
     // Additional security options
@@ -284,10 +329,25 @@ export class NiktoService {
 
     if (format === 'json') {
       try {
-        // Parse JSON output
-        JSON.parse(output);
-        // Convert to our format
-        // This would need adjustment based on actual Nikto JSON output
+        // Parse JSON output - Nikto JSON format: [{"host":"...","vulnerabilities":[...]}]
+        const jsonData = JSON.parse(output);
+        
+        if (Array.isArray(jsonData)) {
+          for (const hostData of jsonData) {
+            if (hostData.vulnerabilities && Array.isArray(hostData.vulnerabilities)) {
+              for (const vuln of hostData.vulnerabilities) {
+                const finding: NiktoFinding = {
+                  id: vuln.id || randomUUID(),
+                  method: vuln.method || 'GET',
+                  uri: vuln.url || '/',
+                  description: vuln.msg || 'Unknown vulnerability',
+                  severity: this.determineSeverityFromVuln(vuln),
+                };
+                findings.push(finding);
+              }
+            }
+          }
+        }
         return findings;
       } catch (error) {
         logger.error('Failed to parse JSON output:', error);
@@ -322,6 +382,22 @@ export class NiktoService {
       return 'medium';
     }
     if (lowerLine.includes('information') || lowerLine.includes('disclosure')) {
+      return 'low';
+    }
+    
+    return 'info';
+  }
+
+  private determineSeverityFromVuln(vuln: any): NiktoFinding['severity'] {
+    const msg = (vuln.msg || '').toLowerCase();
+    
+    if (msg.includes('vulnerability') || msg.includes('exploit') || msg.includes('sql injection') || msg.includes('xss')) {
+      return 'high';
+    }
+    if (msg.includes('outdated') || msg.includes('version') || msg.includes('deprecated')) {
+      return 'medium';
+    }
+    if (msg.includes('information') || msg.includes('disclosure') || msg.includes('header missing')) {
       return 'low';
     }
     

@@ -8,8 +8,14 @@
 - **COMPLETE**: Extended Nikto options support (nolookup, nossl, ssl, port, timeout, vhost)
 - **COMPLETE**: MCP Inspector compatibility verified and fixed
 - **COMPLETE**: MCP communication protocol issues resolved
+- **COMPLETE**: Docker mode JSON output fix implemented and verified
 
 ## Recent Changes
+- **CRITICAL FIX**: Fixed Docker mode JSON output issue that was causing "Output file format specified without a name" error
+- **ROOT CAUSE**: Nikto requires `-output` parameter when using `-Format json` but docker mode wasn't providing it
+- **SOLUTION**: Implemented volume mounting with proper file handling for JSON output in docker mode
+- **IMPLEMENTATION**: Added shell command chaining for docker JSON output with file cleanup
+- **VERIFIED**: Docker mode now properly handles JSON output format with volume mounting
 - **CRITICAL FIX**: Resolved MCP JSON-RPC communication issues by redirecting Winston logger to stderr
 - **ROOT CAUSE**: Winston Console transport was writing to stdout, polluting MCP JSON-RPC stream
 - **SOLUTION**: Changed from Console transport to Stream transport targeting process.stderr
@@ -54,6 +60,10 @@
 - Input validation using schema validators (Zod)
 
 ## Learnings and Insights
+- **CRITICAL**: Docker mode with JSON output requires proper volume mounting and file handling
+- **CRITICAL**: Nikto requires `-output` parameter when using `-Format json` in containerized environments
+- **CRITICAL**: Shell command chaining is needed for docker JSON output with proper cleanup
+- **CRITICAL**: Volume mounting pattern: `-v $TMPDIR:/tmp` enables file access between host/container
 - **CRITICAL**: MCP protocol requires stdout to contain ONLY JSON-RPC messages
 - **CRITICAL**: Any logging or console output to stdout breaks MCP communication
 - **CRITICAL**: Winston logger must use stderr to avoid polluting JSON-RPC stream
