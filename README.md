@@ -25,8 +25,86 @@ npm install              # install dependencies
 npm run build            # compile TypeScript → dist
 ```
 
-Need Nikto itself?  
-Make sure the `nikto` executable is on your `$PATH` or point the MCP to it via `NIKTO_BINARY=/path/to/nikto`.
+### Prerequisites
+
+1. **Nikto Scanner**: Install Nikto and ensure it's accessible
+   ```bash
+   # macOS
+   brew install nikto
+   
+   # Ubuntu/Debian
+   sudo apt-get install nikto
+   
+   # Or from source
+   git clone https://github.com/sullo/nikto
+   ```
+
+2. **Node.js**: Version 18 or higher required
+
+---
+
+## 🚀 Quick Start
+
+### Running the MCP Server
+
+```bash
+# Production mode (compiled)
+node index.js
+
+# Development mode (TypeScript)
+npm run dev
+```
+
+### MCP Client Configuration
+
+Add to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "nikto": {
+      "command": "node",
+      "args": ["/absolute/path/to/nikto-mcp/index.js"],
+      "env": {
+        "NIKTO_BINARY": "/usr/local/bin/nikto",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+```
+
+### Claude Desktop Configuration
+
+For Claude Desktop, edit your configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "nikto": {
+      "command": "node",
+      "args": ["/Users/yourname/path/to/nikto-mcp/index.js"],
+      "env": {
+        "NIKTO_BINARY": "/opt/homebrew/bin/nikto"
+      }
+    }
+  }
+}
+```
+
+### Testing with MCP Inspector
+
+```bash
+# Install MCP Inspector
+npm install -g @modelcontextprotocol/inspector
+
+# Test the server
+npx @modelcontextprotocol/inspector node index.js
+```
+
 ---
 
 ## Available Tools

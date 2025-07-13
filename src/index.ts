@@ -1,5 +1,5 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -7,7 +7,7 @@ import {
   ReadResourceRequestSchema,
   ErrorCode,
   McpError,
-} from '@modelcontextprotocol/sdk/types';
+} from '@modelcontextprotocol/sdk/types.js';
 import { createLogger } from './utils/logger';
 import { NiktoService } from './services/nikto.service';
 import { validateScanOptions } from './validators/scan.validator';

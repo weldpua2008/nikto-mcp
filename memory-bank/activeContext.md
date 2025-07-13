@@ -1,12 +1,23 @@
 # Nikto MCP Active Context
 
 ## Current Work Focus
-- Core MCP functionality complete with enhanced scan tool
-- Comprehensive test suite implemented and passing
-- Extended Nikto options support (nolookup, nossl, ssl, port, timeout, vhost)
-- Documentation updated with detailed parameter tables and examples
+- **COMPLETE**: Full MCP server implementation with stdin/JSON-RPC support
+- **COMPLETE**: Bootstrap `index.js` with compiled/TypeScript fallback
+- **COMPLETE**: Core MCP functionality with enhanced scan tool
+- **COMPLETE**: Comprehensive test suite implemented and passing
+- **COMPLETE**: Extended Nikto options support (nolookup, nossl, ssl, port, timeout, vhost)
+- **COMPLETE**: MCP Inspector compatibility verified and fixed
+- **COMPLETE**: MCP communication protocol issues resolved
 
 ## Recent Changes
+- **CRITICAL FIX**: Resolved MCP JSON-RPC communication issues by redirecting Winston logger to stderr
+- **ROOT CAUSE**: Winston Console transport was writing to stdout, polluting MCP JSON-RPC stream
+- **SOLUTION**: Changed from Console transport to Stream transport targeting process.stderr
+- **VERIFIED**: MCP Inspector now works correctly with proper ping, scan validation, and error responses
+- **CRITICAL**: Created root-level `index.js` for stdin MCP server execution
+- **CRITICAL**: Fixed SDK import paths to use `.js` extensions for export map compatibility
+- **CRITICAL**: Added `tslib` production dependency for compiled TypeScript helpers
+- **VERIFIED**: Both compiled (`dist/index.js`) and TypeScript fallback (`tsx`/`ts-node`) execution paths work
 - Enhanced scan tool with additional Nikto CLI options
 - Added dry-run mode for command testing
 - Implemented comprehensive input validation with conflict checks
@@ -16,16 +27,19 @@
 - All tests passing with good coverage
 
 ## Next Steps
-1. **Documentation Enhancement**
-   - Add deployment guide for production use
-   - Create security best practices document
-   - Add troubleshooting section to README
+1. **Documentation Enhancement** (COMPLETE)
+   - [x] Updated memory bank with latest achievements
+   - [x] Enhanced README.md with deployment and MCP configuration
+   - [x] Enhanced DEVELOPMENT.md with comprehensive troubleshooting and setup details
+   - [x] Added MCP Inspector testing instructions
+   - [x] Added Claude Desktop configuration examples
 
-2. **Optional Enhancements**
+2. **Future Optional Enhancements**
    - Consider adding more Nikto output format options
-   - Implement scan result persistence
-   - Add configuration for custom Nikto binary paths
+   - Implement scan result persistence  
    - Create integration tests with actual Nikto execution
+   - Add plugin system for custom scan modules
+   - Add security best practices document
 
 ## Active Decisions
 - Using TypeScript strict mode for maximum type safety
@@ -40,7 +54,15 @@
 - Input validation using schema validators (Zod)
 
 ## Learnings and Insights
+- **CRITICAL**: MCP protocol requires stdout to contain ONLY JSON-RPC messages
+- **CRITICAL**: Any logging or console output to stdout breaks MCP communication
+- **CRITICAL**: Winston logger must use stderr to avoid polluting JSON-RPC stream
+- **CRITICAL**: MCP SDK import paths require `.js` extensions for deep imports due to export map
+- **CRITICAL**: Bootstrap pattern enables both production (compiled) and development (TypeScript) execution
+- **CRITICAL**: `tslib` is required as production dependency for compiled TypeScript helpers
 - MCP protocol requires specific tool/resource definitions
+- MCP Inspector provides excellent debugging/testing capabilities
 - Nikto output parsing needs careful handling of different formats
 - Security constraints are critical for production use
 - Plugin system should be designed from the start
+- Dual execution mode (compiled/TS) provides development flexibility

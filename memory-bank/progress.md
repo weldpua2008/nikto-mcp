@@ -1,6 +1,12 @@
 # Nikto MCP Progress
 
 ## What Works
+- **COMPLETE**: Full stdin MCP server with root-level `index.js` bootstrap
+- **COMPLETE**: Dual execution mode (compiled dist/index.js + TypeScript fallback)
+- **COMPLETE**: MCP Inspector compatibility verified and tested
+- **COMPLETE**: All SDK import paths fixed with .js extensions
+- **COMPLETE**: Production dependencies (tslib) properly configured
+- **COMPLETE**: MCP JSON-RPC communication protocol fixed (logger redirected to stderr)
 - Initial project repository created
 - README.md with project overview in place
 - Memory Bank documentation established
@@ -24,14 +30,19 @@
    - [x] Add development scripts
    - [x] Configure linting (ESLint)
    - [x] Install npm dependencies
+   - [x] **COMPLETE**: Root-level index.js for stdin MCP execution
+   - [x] **COMPLETE**: Bootstrap pattern for compiled/TS fallback
+   - [x] **COMPLETE**: Production dependencies (tslib)
 
 2. **Core Implementation**
    - [x] MCP server foundation
+   - [x] **COMPLETE**: JSON-RPC over stdin/stdout communication
    - [x] Nikto wrapper module with enhanced CLI options
    - [x] Input validation layer with conflict checking
    - [x] Security sandboxing and input sanitization
    - [x] Output parsing logic
    - [x] Dry-run mode for testing
+   - [x] **COMPLETE**: MCP Inspector compatibility
 
 3. **MCP Tools**
    - [x] Enhanced scan execution tool with full Nikto options
@@ -46,25 +57,32 @@
    - [x] Service logic tests
    - [x] Mock Nikto responses
    - [x] Test coverage configuration (93%+ coverage)
+   - [x] **COMPLETE**: Both execution modes tested and verified
    - [ ] Integration tests with real Nikto execution
 
-5. **Documentation**
+5. **Documentation** (COMPLETE)
    - [x] Enhanced README with parameter tables and examples
    - [x] API documentation for scan tool
    - [x] Example usage (examples/scan-demo.js)
-   - [ ] Deployment guide
-   - [ ] Security best practices guide
-   - [ ] Plugin development guide
+   - [x] **COMPLETE**: Enhanced deployment guide with MCP configuration
+   - [x] **COMPLETE**: Enhanced troubleshooting section with comprehensive debugging
+   - [x] **COMPLETE**: Claude Desktop configuration examples
+   - [x] **COMPLETE**: MCP Inspector testing instructions
+   - [ ] Security best practices guide (future enhancement)
+   - [ ] Plugin development guide (future enhancement)
 
 ## Current Status
-- **Phase**: Core functionality complete with enhanced features
+- **Phase**: **PRODUCTION READY** - Full stdin MCP server implementation complete
 - **Blockers**: None
-- **Next Action**: Optional enhancements and documentation polish
+- **Next Action**: Documentation enhancement and optional features
+- **MCP Compatibility**: Verified with MCP Inspector
+- **Execution Modes**: Both compiled (dist/) and TypeScript (tsx/ts-node) working
 
 ## Known Issues
-- None - all tests passing
+- None - all tests passing, MCP communication protocol working correctly
 
 ## Recent Fixes
+- **CRITICAL**: Fixed MCP JSON-RPC communication by redirecting Winston logger from stdout to stderr
 - Fixed Jest configuration for TypeScript/CommonJS compatibility
 - Updated all imports to use CommonJS syntax
 - Created comprehensive test suite with 11 passing tests
@@ -76,3 +94,8 @@
 - **2025-01-13**: Decided on Jest for testing framework due to TypeScript support
 - **2025-01-13**: Implemented strict TypeScript configuration for maximum type safety
 - **2025-01-13**: Created modular architecture with separate services, validators, and utilities
+- **2025-01-13**: **CRITICAL**: Implemented bootstrap index.js pattern for production/dev flexibility
+- **2025-01-13**: **CRITICAL**: Fixed SDK import paths to use .js extensions for export map compatibility
+- **2025-01-13**: **CRITICAL**: Added tslib as production dependency for compiled helpers
+- **2025-01-13**: **VERIFIED**: MCP Inspector integration confirms protocol compliance
+- **2025-01-13**: **CRITICAL FIX**: Resolved MCP communication issues - logger stdout pollution fixed

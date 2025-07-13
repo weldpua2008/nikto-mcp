@@ -65,22 +65,59 @@ npm run test:watch
 npm run test:coverage
 ```
 
-### Using with Claude Desktop
+### Using with MCP Clients
 
-To use this MCP server with Claude Desktop, add the following to your Claude Desktop configuration:
+#### Claude Desktop Configuration
 
+**Configuration File Locations:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+
+**Production Configuration (Recommended):**
 ```json
 {
   "mcpServers": {
     "nikto": {
       "command": "node",
-      "args": ["/path/to/nikto-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/nikto-mcp/index.js"],
       "env": {
-        "NIKTO_BINARY": "/usr/local/bin/nikto"
+        "NIKTO_BINARY": "/opt/homebrew/bin/nikto",
+        "LOG_LEVEL": "info",
+        "SCAN_TIMEOUT": "3600",
+        "MAX_CONCURRENT_SCANS": "3"
       }
     }
   }
 }
+```
+
+**Development Configuration (TypeScript):**
+```json
+{
+  "mcpServers": {
+    "nikto": {
+      "command": "node",
+      "args": ["/absolute/path/to/nikto-mcp/index.js"],
+      "env": {
+        "NIKTO_BINARY": "/usr/local/bin/nikto",
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
+```
+
+#### MCP Inspector (Development Tool)
+
+```bash
+# Install globally
+npm install -g @modelcontextprotocol/inspector
+
+# Test the server
+npx @modelcontextprotocol/inspector node index.js
+
+# Test with specific environment
+NIKTO_BINARY=/usr/local/bin/nikto npx @modelcontextprotocol/inspector node index.js
 ```
 
 ## Architecture
@@ -129,6 +166,149 @@ nikto-mcp/
 
 ### Common Issues
 
-1. **"Nikto not found"**: Ensure Nikto is installed and in PATH, or set `NIKTO_BINARY` environment variable
-2. **TypeScript errors**: Run `npm install` to install dependencies
-3. **Build errors**: Ensure you're using Node.js 18+
+#### 1. **"Nikto not found" or Command Execution Errors**
+
+**Symptoms:**
+- Error: `spawn nikto ENOENT`
+- Error: `Command failed: nikto`
+
+**Solutions:**
+```bash
+# Check if nikto is installed and accessible
+which nikto
+nikto -Version
+
+# If not found, install nikto
+# macOS
+brew install nikto
+
+# Ubuntu/Debian
+sudo apt-get install nikto
+
+# Set custom path if needed
+export NIKTO_BINARY="/usr/local/bin/nikto"
+```
+
+#### 2. **MCP Connection Issues**
+
+**Symptoms:**
+- Claude Desktop doesn't recognize the server
+- Connection timeout errors
+- "Server failed to start" messages
+
+**Solutions:**
+```bash
+# Test server manually
+node index.js
+
+# Check if process starts without errors
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}' | node index.js
+
+# Use MCP Inspector for debugging
+npx @modelcontextprotocol/inspector node index.js
+```
+
+#### 3. **TypeScript/Build Errors**
+
+**Symptoms:**
+- Module not found errors
+- Type checking failures
+- Build compilation errors
+
+**Solutions:**
+```bash
+# Clean install
+rm -rf node_modules package-lock.json
+npm install
+
+# Verify Node.js version (18+ required)
+node --version
+
+# Manual build
+npm run build
+
+# Check TypeScript compilation
+npm run typecheck
+```
+
+#### 4. **Permission Issues**
+
+**Symptoms:**
+- `EACCES` errors
+- Permission denied when accessing nikto
+
+**Solutions:**
+```bash
+# Check nikto permissions
+ls -la $(which nikto)
+
+# Fix permissions if needed
+sudo chmod +x $(which nikto)
+
+# For custom nikto installations
+sudo chmod +x /path/to/custom/nikto
+```
+
+#### 5. **Port/Network Issues**
+
+**Symptoms:**
+- Connection refused errors
+- Timeout during scans
+
+**Solutions:**
+```bash
+# Test connectivity manually
+curl -I https://target-domain.com
+
+# Check firewall/proxy settings
+# Adjust timeout if needed
+export SCAN_TIMEOUT="7200"  # 2 hours
+```
+
+### Development Debugging
+
+#### Enable Debug Logging
+```bash
+# Set debug level
+export LOG_LEVEL="debug"
+node index.js
+```
+
+#### Test Individual Components
+```bash
+# Run specific test suites
+npm test -- --testNamePattern="validator"
+npm test -- --testNamePattern="service"
+
+# Run with coverage
+npm run test:coverage
+```
+
+#### Manual Testing Commands
+```bash
+# Test nikto command generation (dry run)
+node -e "
+const { validateScanInput } = require('./dist/validators/scan.validator.js');
+const result = validateScanInput({target: 'example.com', dryRun: true});
+console.log(result);
+"
+```
+
+### Configuration Validation
+
+#### Verify MCP Configuration
+```bash
+# Test JSON syntax
+python -m json.tool ~/.config/claude_desktop_config.json
+
+# Or with Node.js
+node -e "console.log(JSON.parse(require('fs').readFileSync('path/to/config.json', 'utf8')))"
+```
+
+#### Environment Variables
+```bash
+# Check current environment
+env | grep -E "(NIKTO|LOG|SCAN|MCP)"
+
+# Test with specific settings
+NIKTO_BINARY=/usr/local/bin/nikto LOG_LEVEL=debug node index.js

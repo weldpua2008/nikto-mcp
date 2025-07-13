@@ -37,6 +37,7 @@
   "homepage": "https://github.com/weldpua2008/nikto-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "tslib": "^2.8.1",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },

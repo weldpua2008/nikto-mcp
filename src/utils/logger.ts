@@ -14,11 +14,9 @@ export function createLogger(service: string): winston.Logger {
     format: logFormat,
     defaultMeta: { service },
     transports: [
-      new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple(),
-        ),
+      // Send all logs to stderr to avoid polluting stdout used by MCP JSON-RPC
+      new winston.transports.Stream({
+        stream: process.stderr,
       }),
     ],
   });
