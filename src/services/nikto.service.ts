@@ -57,10 +57,27 @@ export class NiktoService {
 
     // Handle dry run mode
     if (options.dryRun) {
-      const args = this.buildNiktoArgs(options);
-      const command = `${config.niktoBinary} ${args.join(' ')}`;
-      logger.debug(`Dry run for scan ${scanId}: ${command}`);
-      activeScan.output.push(`DRY RUN: ${command}`);
+      let command: string;
+      let args: string[];
+
+      if (config.niktoMode === 'docker') {
+        const niktoArgs = this.buildNiktoArgs(options);
+        command = 'docker';
+        args = [
+          'run',
+          '--rm',
+          `--network=${config.dockerNetworkMode}`,
+          config.dockerImage,
+          ...niktoArgs
+        ];
+      } else {
+        command = config.niktoBinary;
+        args = this.buildNiktoArgs(options);
+      }
+
+      const fullCommand = `${command} ${args.join(' ')}`;
+      logger.debug(`Dry run for scan ${scanId}: ${fullCommand}`);
+      activeScan.output.push(`DRY RUN (${config.niktoMode} mode): ${fullCommand}`);
       activeScan.status = ScanStatus.COMPLETED;
       
       return {
@@ -104,11 +121,27 @@ export class NiktoService {
     options: ScanOptions, 
     scanId: string
   ): Promise<ChildProcess> {
-    const args = this.buildNiktoArgs(options);
-    
-    logger.info(`Starting Nikto scan ${scanId} with args:`, args);
+    let command: string;
+    let args: string[];
 
-    const niktoProcess = spawn(config.niktoBinary, args, {
+    if (config.niktoMode === 'docker') {
+      const niktoArgs = this.buildNiktoArgs(options);
+      command = 'docker';
+      args = [
+        'run',
+        '--rm',
+        `--network=${config.dockerNetworkMode}`,
+        config.dockerImage,
+        ...niktoArgs
+      ];
+    } else {
+      command = config.niktoBinary;
+      args = this.buildNiktoArgs(options);
+    }
+    
+    logger.info(`Starting Nikto scan ${scanId} in ${config.niktoMode} mode with command: ${command} ${args.join(' ')}`);
+
+    const niktoProcess = spawn(command, args, {
       env: { ...process.env, LANG: 'C' }, // Ensure consistent output
       timeout: options.timeout ? options.timeout * 1000 : undefined,
     });

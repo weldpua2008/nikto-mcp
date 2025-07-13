@@ -3,6 +3,9 @@ import { z } from 'zod';
 const configSchema = z.object({
   version: z.string(),
   niktoBinary: z.string(),
+  niktoMode: z.enum(['local', 'docker']),
+  dockerImage: z.string(),
+  dockerNetworkMode: z.string(),
   maxConcurrentScans: z.number().positive(),
   defaultTimeout: z.number().positive(),
   logLevel: z.enum(['debug', 'info', 'warn', 'error']),
@@ -14,6 +17,9 @@ export type Config = z.infer<typeof configSchema>;
 export const config: Config = {
   version: '0.1.0',
   niktoBinary: process.env['NIKTO_BINARY'] ?? 'nikto',
+  niktoMode: (process.env['NIKTO_MODE'] as Config['niktoMode']) ?? 'local',
+  dockerImage: process.env['NIKTO_DOCKER_IMAGE'] ?? 'ghcr.io/sullo/nikto:latest',
+  dockerNetworkMode: process.env['NIKTO_DOCKER_NETWORK'] ?? 'host',
   maxConcurrentScans: parseInt(process.env['MAX_CONCURRENT_SCANS'] ?? '3', 10),
   defaultTimeout: parseInt(process.env['SCAN_TIMEOUT'] ?? '3600', 10),
   logLevel: (process.env['LOG_LEVEL'] as Config['logLevel']) ?? 'info',

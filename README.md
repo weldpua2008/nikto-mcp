@@ -105,6 +105,55 @@ npm install -g @modelcontextprotocol/inspector
 npx @modelcontextprotocol/inspector node index.js
 ```
 
+### Docker Support
+
+The MCP server supports running Nikto via Docker for better isolation and consistency.
+
+#### Environment Variables
+
+- `NIKTO_MODE` - Execution mode: `local` or `docker` (default: `local`)
+- `NIKTO_DOCKER_IMAGE` - Docker image to use (default: `ghcr.io/sullo/nikto:latest`)
+- `NIKTO_DOCKER_NETWORK` - Docker network mode (default: `host`)
+- `NIKTO_BINARY` - Path to Nikto executable for local mode (default: `nikto`)
+- `LOG_LEVEL` - Logging level: debug, info, warn, error (default: `info`)
+- `SCAN_TIMEOUT` - Maximum scan duration in seconds (default: `3600`)
+- `MAX_CONCURRENT_SCANS` - Maximum concurrent scans (default: `3`)
+
+#### Docker Mode Configuration
+
+```json
+{
+  "mcpServers": {
+    "nikto": {
+      "command": "node",
+      "args": ["/absolute/path/to/nikto-mcp/index.js"],
+      "env": {
+        "NIKTO_MODE": "docker",
+        "NIKTO_DOCKER_IMAGE": "ghcr.io/sullo/nikto:latest",
+        "NIKTO_DOCKER_NETWORK": "host",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+```
+
+#### Building and Running with Docker
+
+```bash
+# Build the MCP server with embedded Nikto
+docker build -t nikto-mcp .
+
+# Run the containerized MCP server
+docker run --rm -i nikto-mcp
+
+# Run with custom configuration
+docker run --rm -i \
+  -e NIKTO_MODE=local \
+  -e LOG_LEVEL=debug \
+  nikto-mcp
+```
+
 ---
 
 ## Available Tools

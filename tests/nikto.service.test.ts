@@ -36,7 +36,7 @@ describe('NiktoService', () => {
       
       // The output should contain the dry run command
       const scan = (niktoService as any).activeScans.get(result.scanId);
-      expect(scan.output[0]).toContain('DRY RUN: nikto -h example.com');
+      expect(scan.output[0]).toContain('DRY RUN (local mode): nikto -h example.com');
       expect(scan.output[0]).toContain('-timeout 3600');
       expect(scan.output[0]).toContain('-nointeractive');
     });

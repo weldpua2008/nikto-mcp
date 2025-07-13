@@ -44,7 +44,10 @@
 
 ### Environment Variables
 
-- `NIKTO_BINARY` - Path to Nikto executable (default: `nikto`)
+- `NIKTO_MODE` - Execution mode: `local` or `docker` (default: `local`)
+- `NIKTO_BINARY` - Path to Nikto executable for local mode (default: `nikto`)
+- `NIKTO_DOCKER_IMAGE` - Docker image to use (default: `ghcr.io/sullo/nikto:latest`)
+- `NIKTO_DOCKER_NETWORK` - Docker network mode (default: `host`)
 - `MCP_PORT` - Port for MCP server (optional)
 - `LOG_LEVEL` - Logging level: debug, info, warn, error (default: `info`)
 - `SCAN_TIMEOUT` - Maximum scan duration in seconds (default: `3600`)
@@ -118,6 +121,44 @@ npx @modelcontextprotocol/inspector node index.js
 
 # Test with specific environment
 NIKTO_BINARY=/usr/local/bin/nikto npx @modelcontextprotocol/inspector node index.js
+```
+
+#### Docker Development
+
+**Docker Mode Configuration:**
+```json
+{
+  "mcpServers": {
+    "nikto": {
+      "command": "node",
+      "args": ["/absolute/path/to/nikto-mcp/index.js"],
+      "env": {
+        "NIKTO_MODE": "docker",
+        "NIKTO_DOCKER_IMAGE": "ghcr.io/sullo/nikto:latest",
+        "NIKTO_DOCKER_NETWORK": "host",
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
+```
+
+**Building and Testing:**
+```bash
+# Build the Docker image
+docker build -t nikto-mcp .
+
+# Test the containerized MCP server
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}' | docker run --rm -i nikto-mcp
+
+# Run with custom configuration
+docker run --rm -i \
+  -e NIKTO_MODE=local \
+  -e LOG_LEVEL=debug \
+  nikto-mcp
+
+# Test Docker mode (requires Docker daemon)
+NIKTO_MODE=docker npx @modelcontextprotocol/inspector node index.js
 ```
 
 ## Architecture
