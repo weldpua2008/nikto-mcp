@@ -181,8 +181,8 @@ export class NiktoService {
     // Target (required)
     args.push('-h', sanitizeInput(options.target));
 
-    // Port
-    if (options.port) {
+    // Port - only add if target doesn't already contain a port in the URL
+    if (options.port && !this.targetHasPort(options.target)) {
       args.push('-p', options.port.toString());
     }
 
@@ -326,6 +326,28 @@ export class NiktoService {
     }
     
     return 'info';
+  }
+
+  private targetHasPort(target: string): boolean {
+    try {
+      // Check if target is a full URL with port
+      if (target.startsWith('http://') || target.startsWith('https://')) {
+        const url = new URL(target);
+        return url.port !== '';
+      }
+      
+      // Check if target is hostname:port format
+      const parts = target.split(':');
+      if (parts.length === 2 && parts[1]) {
+        const port = parseInt(parts[1], 10);
+        return !isNaN(port) && port > 0 && port <= 65535;
+      }
+      
+      return false;
+    } catch {
+      // If URL parsing fails, assume no port
+      return false;
+    }
   }
 
   private cleanup(): void {

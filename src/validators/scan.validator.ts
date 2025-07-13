@@ -8,10 +8,23 @@ const scanOptionsSchema = z.object({
     .min(1, 'Target is required')
     .refine(
       (value) => {
-        // Basic validation for URL or IP
+        // Basic validation for URL, IP, hostname, or hostname:port
         const urlPattern = /^https?:\/\/.+/;
         const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
         const hostnamePattern = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*$/;
+        
+        // Check for hostname:port format
+        const parts = value.split(':');
+        if (parts.length === 2 && parts[0] && parts[1]) {
+          const hostname = parts[0];
+          const portStr = parts[1];
+          const port = parseInt(portStr, 10);
+          
+          if ((hostnamePattern.test(hostname) || ipPattern.test(hostname)) && 
+              !isNaN(port) && port > 0 && port <= 65535) {
+            return true;
+          }
+        }
         
         return urlPattern.test(value) || ipPattern.test(value) || hostnamePattern.test(value);
       },
