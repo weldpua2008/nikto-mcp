@@ -34,22 +34,126 @@ First, install the Nikto MCP server with your client. A typical configuration lo
 ```
 
 
-
-
-
 [<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%257B%2522name%2522%253A%2522niktomcp%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522nikto-mcp%2540latest%2522%255D%257D) [<img alt="Install in VS Code Insiders" src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%257B%2522name%2522%253A%2522niktomcp%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522nikto-mcp%2540latest%2522%255D%257D)
+<details><summary><b>Install in VS Code</b></summary>
+You can also install the Nikto MCP server using the VS Code CLI:
+```bash
+# For VS Code
+code --add-mcp '{"name":"niktomcp","command":"npx","args":["nikto-mcp@latest"]}'
+```
 
+After installation, the Nikto MCP server will be available for use with your GitHub Copilot agent in VS Code.
+</details>
 
+<details>
+<summary><b>Install in Cursor</b></summary>
+Go to `Cursor Settings` -> `MCP` -> `Add new MCP Server`. Name to your liking, use `command` type with the command `npx nikto-mcp@latest`. You can also verify config or add command like arguments via clicking `Edit`.
 
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+</details>
 
-## 📦 Installation
+<details>
+<summary><b>Install in Windsurf</b></summary>
+
+Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/mcp). Use following configuration:
+
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>Install in Claude Desktop</b></summary>
+
+Follow the MCP install [guide](https://modelcontextprotocol.io/quickstart/user), use following configuration:
+
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>Install in Claude Code</b></summary>
+
+Use the Claude Code CLI to add the Nikto MCP server:
 
 ```bash
-git clone https://github.com/weldpua2008/nikto-mcp.git
-cd nikto-mcp
-npm install              # install dependencies
-npm run build            # compile TypeScript → dist
+claude mcp add nikto-mcp npx nikto-mcp
 ```
+</details>
+
+<details>
+<summary><b>Install in Goose</b></summary>
+Go to `Advanced settings` -> `Extensions` -> `Add custom extension`. Name to your liking, use type `STDIO`, and set the `command` to `npx nikto-mcp`. Click "Add Extension".
+</details>
+<details>
+<summary><b>Install in Qodo Gen</b></summary>
+
+Open [Qodo Gen](https://docs.qodo.ai/qodo-documentation/qodo-gen) chat panel in VSCode or IntelliJ → Connect more tools → + Add new MCP → Paste the following configuration:
+
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+
+Click <code>Save</code>.
+</details>
+
+<details>
+<summary><b>Install in Gemini CLI</b></summary>
+
+Follow the MCP install [guide](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md#configure-the-mcp-server-in-settingsjson), use following configuration:
+
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+</details>
 
 ### Prerequisites
 
@@ -71,14 +175,10 @@ npm run build            # compile TypeScript → dist
 
 ## 🚀 Quick Start
 
-### Running the MCP Server
+### Running the MCP Server via MCP inspector
 
 ```bash
-# Production mode (compiled)
-node index.js
-
-# Development mode (TypeScript)
-npm run dev
+ npx @modelcontextprotocol/inspector  nikto-mcp@latest          
 ```
 
 ### MCP Client Configuration
@@ -100,28 +200,8 @@ Add to your MCP client configuration:
 }
 ```
 
-### Claude Desktop Configuration
 
-For Claude Desktop, edit your configuration file:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "nikto": {
-      "command": "node",
-      "args": ["/Users/yourname/path/to/nikto-mcp/index.js"],
-      "env": {
-        "NIKTO_BINARY": "/opt/homebrew/bin/nikto"
-      }
-    }
-  }
-}
-```
-
-### Testing with MCP Inspector
+### Testing with MCP Inspector (Dev)
 
 ```bash
 # Install MCP Inspector
