@@ -353,3 +353,14 @@ env | grep -E "(NIKTO|LOG|SCAN|MCP)"
 
 # Test with specific settings
 NIKTO_BINARY=/usr/local/bin/nikto LOG_LEVEL=debug node index.js
+```
+
+### Concurrent Scan Safety
+
+#### Filename Collision Prevention (RESOLVED)
+Previously, multiple concurrent JSON scans could overwrite each other using the static path `/tmp/nikto-scan.json`. This has been **fixed** by implementing unique per-scan filenames:
+
+- **Docker mode**: `/tmp/nikto-scan-<scanId>.json`
+- **Local mode**: `/tmp/nikto-output-<scanId>.json`
+
+The system automatically generates UUIDs for each scan, ensuring safe concurrent operation without manual intervention.

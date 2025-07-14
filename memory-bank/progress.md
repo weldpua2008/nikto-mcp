@@ -8,6 +8,7 @@
 - **COMPLETE**: Production dependencies (tslib) properly configured
 - **COMPLETE**: MCP JSON-RPC communication protocol fixed (logger redirected to stderr)
 - **COMPLETE**: Docker mode JSON output with proper volume mounting and file handling
+- **COMPLETE**: Concurrent JSON scans now safe with unique per-scan filenames
 - Initial project repository created
 - README.md with project overview in place
 - Memory Bank documentation established

@@ -13,6 +13,7 @@ This project provides a modern, testable, and extensible interface for managing 
 - 📊 Multiple output formats: JSON (machine-readable) and rich CLI (human-readable)
 - 🌐 Optional REST API for remote scan management
 - 🛡️ Secure by default: sandboxed execution, sensible timeouts, and minimal privileges
+- 🔒 Safe concurrent JSON scans (unique output filenames)
 
 ---
 
@@ -118,6 +119,8 @@ The MCP server supports running Nikto via Docker for better isolation and consis
 - `LOG_LEVEL` - Logging level: debug, info, warn, error (default: `info`)
 - `SCAN_TIMEOUT` - Maximum scan duration in seconds (default: `3600`)
 - `MAX_CONCURRENT_SCANS` - Maximum concurrent scans (default: `3`)
+
+**Note**: JSON output automatically uses unique filenames per scan (`/tmp/nikto-scan-<uuid>.json`) to prevent concurrent scan collisions.
 
 #### Docker Mode Configuration
 

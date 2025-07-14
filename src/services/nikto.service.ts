@@ -61,21 +61,16 @@ export class NiktoService {
       let args: string[];
 
       if (config.niktoMode === 'docker') {
-        const niktoArgs = this.buildNiktoArgs(options);
+        const niktoArgs = this.buildNiktoArgs(options, scanId);
         
         if (options.outputFormat === 'json') {
           const tmpDir = process.env['TMPDIR'] || process.cwd();
-          const outputFile = `/tmp/nikto-scan-${scanId}.json`;
           const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
-          
-          const updatedArgs = niktoArgs.map(arg => 
-            arg === '/tmp/nikto-scan.json' ? outputFile : arg
-          );
           
           command = 'sh';
           args = [
             '-c',
-            `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${updatedArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+            `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
           ];
         } else {
           command = 'docker';
@@ -89,7 +84,7 @@ export class NiktoService {
         }
       } else {
         command = config.niktoBinary;
-        args = this.buildNiktoArgs(options);
+        args = this.buildNiktoArgs(options, scanId);
       }
 
       const fullCommand = `${command} ${args.join(' ')}`;
@@ -142,23 +137,17 @@ export class NiktoService {
     let args: string[];
 
     if (config.niktoMode === 'docker') {
-      const niktoArgs = this.buildNiktoArgs(options);
+      const niktoArgs = this.buildNiktoArgs(options, scanId);
       
       if (options.outputFormat === 'json') {
         // For JSON output in docker mode, use volume mounting and post-process
         const tmpDir = process.env['TMPDIR'] || process.cwd();
-        const outputFile = `/tmp/nikto-scan-${scanId}.json`;
         const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
-        
-        // Update nikto args to use the specific output file
-        const updatedArgs = niktoArgs.map(arg => 
-          arg === '/tmp/nikto-scan.json' ? outputFile : arg
-        );
         
         command = 'sh';
         args = [
           '-c',
-          `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${updatedArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+          `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
         ];
       } else {
         command = 'docker';
@@ -172,7 +161,7 @@ export class NiktoService {
       }
     } else {
       command = config.niktoBinary;
-      args = this.buildNiktoArgs(options);
+      args = this.buildNiktoArgs(options, scanId);
     }
     
     logger.info(`Starting Nikto scan ${scanId} in ${config.niktoMode} mode with command: ${command} ${args.join(' ')}`);
@@ -211,7 +200,7 @@ export class NiktoService {
     return niktoProcess;
   }
 
-  private buildNiktoArgs(options: ScanOptions): string[] {
+  private buildNiktoArgs(options: ScanOptions, scanId?: string): string[] {
     const args: string[] = [];
 
     // Target (required)
@@ -246,14 +235,15 @@ export class NiktoService {
     // Output format handling
     if (options.outputFormat === 'json') {
       if (config.niktoMode === 'docker') {
-        // In docker mode, we write to a temporary file inside the container
-        // The output will be captured via stdout/stderr instead
+        // In docker mode, use unique filename based on scanId
+        const outputFile = scanId ? `/tmp/nikto-scan-${scanId}.json` : '/tmp/nikto-scan.json';
         args.push('-Format', 'json');
-        args.push('-output', '/tmp/nikto-scan.json');
+        args.push('-output', outputFile);
       } else {
-        // In native mode, we can write to a temporary file
+        // In native mode, use unique filename based on scanId
+        const outputFile = scanId ? `/tmp/nikto-output-${scanId}.json` : '/tmp/nikto-output.json';
         args.push('-Format', 'json');
-        args.push('-output', '/tmp/nikto-output.json');
+        args.push('-output', outputFile);
       }
     }
 

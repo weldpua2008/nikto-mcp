@@ -16,6 +16,7 @@
 - **SOLUTION**: Implemented volume mounting with proper file handling for JSON output in docker mode
 - **IMPLEMENTATION**: Added shell command chaining for docker JSON output with file cleanup
 - **VERIFIED**: Docker mode now properly handles JSON output format with volume mounting
+- **CONCURRENCY FIX**: Fixed filename collision by generating `/tmp/nikto-scan-<scanId>.json` (docker) and `/tmp/nikto-output-<scanId>.json` (local). Removed post-hoc arg substitution for cleaner, safer concurrent scan handling.
 - **CRITICAL FIX**: Resolved MCP JSON-RPC communication issues by redirecting Winston logger to stderr
 - **ROOT CAUSE**: Winston Console transport was writing to stdout, polluting MCP JSON-RPC stream
 - **SOLUTION**: Changed from Console transport to Stream transport targeting process.stderr
