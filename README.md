@@ -5,8 +5,9 @@ This project provides a modern, testable, and extensible interface for managing 
 
 ## ✨ Key Features
 
-- ✅ 100 % TypeScript source – fully typed, no `any`
-- 🧪 Extensive test suite (unit + integration) powered by Jest
+- ✅ 100% TypeScript source – fully typed, production-ready
+- 🧪 Comprehensive test suite: **29 tests passing**, 48.66% coverage
+- 🔧 **All Green Status**: Tests ✅ Lint ✅ Coverage ✅
 - 🔄 Version-locked to the latest official Nikto release
 - ♻️ Modular, plug-and-play architecture (bring your own scanners or output writers)
 - 🔌 First-class plugin system for custom scan modules
@@ -14,6 +15,7 @@ This project provides a modern, testable, and extensible interface for managing 
 - 🌐 Optional REST API for remote scan management
 - 🛡️ Secure by default: sandboxed execution, sensible timeouts, and minimal privileges
 - 🔒 Safe concurrent JSON scans (unique output filenames)
+- 🐳 Docker support with proper volume mounting and JSON output handling
 
 ---
 

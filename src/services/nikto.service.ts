@@ -59,7 +59,7 @@ export class NiktoService {
         const niktoArgs = this.buildNiktoArgs(options, scanId);
 
         if (options.outputFormat === 'json') {
-          const tmpDir = process.env['TMPDIR'] || process.cwd();
+          const tmpDir = process.env['TMPDIR'] ?? process.cwd();
           const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
 
           command = 'sh';
@@ -97,7 +97,7 @@ export class NiktoService {
     }
 
     try {
-      const niktoProcess = await this.spawnNiktoProcess(options, scanId);
+      const niktoProcess = this.spawnNiktoProcess(options, scanId);
       if (niktoProcess.pid) {
         activeScan.pid = niktoProcess.pid;
       }
@@ -124,7 +124,7 @@ export class NiktoService {
     }
   }
 
-  private async spawnNiktoProcess(options: ScanOptions, scanId: string): Promise<ChildProcess> {
+  private spawnNiktoProcess(options: ScanOptions, scanId: string): ChildProcess {
     let command: string;
     let args: string[];
 
@@ -133,7 +133,7 @@ export class NiktoService {
 
       if (options.outputFormat === 'json') {
         // For JSON output in docker mode, use volume mounting and post-process
-        const tmpDir = process.env['TMPDIR'] || process.cwd();
+        const tmpDir = process.env['TMPDIR'] ?? process.cwd();
         const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
 
         command = 'sh';
@@ -223,7 +223,7 @@ export class NiktoService {
     }
 
     // Timeout (use provided timeout or default from config)
-    const timeoutValue = options.timeout || config.defaultTimeout;
+    const timeoutValue = options.timeout ?? config.defaultTimeout;
     args.push('-timeout', timeoutValue.toString());
 
     // Output format handling
@@ -277,7 +277,7 @@ export class NiktoService {
     return result;
   }
 
-  async stopScan(scanId: string): Promise<void> {
+  stopScan(scanId: string): void {
     const scan = this.activeScans.get(scanId);
 
     if (!scan) {
@@ -323,10 +323,10 @@ export class NiktoService {
             if (hostData.vulnerabilities && Array.isArray(hostData.vulnerabilities)) {
               for (const vuln of hostData.vulnerabilities) {
                 const finding: NiktoFinding = {
-                  id: vuln.id || randomUUID(),
-                  method: vuln.method || 'GET',
-                  uri: vuln.url || '/',
-                  description: vuln.msg || 'Unknown vulnerability',
+                  id: vuln.id ?? randomUUID(),
+                  method: vuln.method ?? 'GET',
+                  uri: vuln.url ?? '/',
+                  description: vuln.msg ?? 'Unknown vulnerability',
                   severity: this.determineSeverityFromVuln(vuln),
                 };
                 findings.push(finding);
@@ -374,8 +374,8 @@ export class NiktoService {
     return 'info';
   }
 
-  private determineSeverityFromVuln(vuln: any): NiktoFinding['severity'] {
-    const msg = (vuln.msg || '').toLowerCase();
+  private determineSeverityFromVuln(vuln: Record<string, unknown>): NiktoFinding['severity'] {
+    const msg = ((vuln['msg'] as string) ?? '').toLowerCase();
 
     if (
       msg.includes('vulnerability') ||
