@@ -1,23 +1,38 @@
 # Nikto MCP (Model Context Protocol) server in TypeScript
 
 A secure MCP (Model Context Protocol) server that enables AI agents to interact with [Nikto web server scanner](https://github.com/sullo/nikto).
-This project provides a modern, testable, and extensible interface for managing and interacting with Nikto scans, designed to mirror and stay in sync with the official Nikto.
+This server enables LLMs to interact with Nikto scans, designed to mirror and stay in sync with the official Nikto.
 
-## ✨ Key Features
+### ✨ Key Features
 
 - ✅ 100% TypeScript source – fully typed, production-ready
-- 🧪 Comprehensive test suite: **29 tests passing**, 48.66% coverage
-- 🔧 **All Green Status**: Tests ✅ Lint ✅ Coverage ✅
-- 🔄 Version-locked to the latest official Nikto release
-- ♻️ Modular, plug-and-play architecture (bring your own scanners or output writers)
-- 🔌 First-class plugin system for custom scan modules
 - 📊 Multiple output formats: JSON (machine-readable) and rich CLI (human-readable)
 - 🌐 Optional REST API for remote scan management
 - 🛡️ Secure by default: sandboxed execution, sensible timeouts, and minimal privileges
-- 🔒 Safe concurrent JSON scans (unique output filenames)
 - 🐳 Docker support with proper volume mounting and JSON output handling
-
 ---
+
+### Requirements
+- Node.js 20 or newer
+- VS Code, Cursor, Windsurf, Claude Desktop, Goose or any other MCP client
+
+### Getting started
+
+First, install the Nikto MCP server with your client. A typical configuration looks like this:
+
+```js
+{
+  "mcpServers": {
+    "niktomcp": {
+      "command": "npx",
+      "args": [
+        "nikto-mcp@latest"
+      ]
+    }
+  }
+}
+```
+
 
 ## 📦 Installation
 
