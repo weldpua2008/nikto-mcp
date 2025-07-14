@@ -1,7 +1,7 @@
 # Nikto MCP Progress
 
 ## What Works
-- **COMPLETE**: Full stdin MCP server with root-level `index.js` bootstrap
+- **COMPLETE**: Full stdin MCP server with root-level `index.cjs` bootstrap (FIXED ES Module issue)
 - **COMPLETE**: Dual execution mode (compiled dist/index.js + TypeScript fallback)
 - **COMPLETE**: MCP Inspector compatibility verified and tested
 - **COMPLETE**: All SDK import paths fixed with .js extensions
@@ -9,7 +9,12 @@
 - **COMPLETE**: MCP JSON-RPC communication protocol fixed (logger redirected to stderr)
 - **COMPLETE**: Docker mode JSON output with proper volume mounting and file handling
 - **COMPLETE**: Concurrent JSON scans now safe with unique per-scan filenames
-- **COMPLETE**: ESLint and TypeScript compatibility fixed (0 errors, 6 warnings)
+- **COMPLETE**: ESLint and TypeScript compatibility fixed (0 errors, 1 warning)
+- **COMPLETE**: NPX Compatibility Fix - ES Module Error Resolution (v0.1.2)
+  - Fixed: ReferenceError: require is not defined in ES module scope
+  - Solution: Renamed index.js to index.cjs for CommonJS compatibility
+  - Updated: package.json bin field to point to index.cjs
+  - Released: Version 0.1.2 with working npx execution
 - Initial project repository created
 - README.md with project overview in place
 - Memory Bank documentation established
@@ -124,3 +129,7 @@
 - **2025-01-14**: **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility - balanced strictness with practicality
 - **2025-01-14**: **DECISION**: Stay on ESLint v8 instead of migrating to v9 (requires flat config)
 - **2025-01-14**: **DECISION**: Use TypeScript 5.3.3 for @typescript-eslint v6 compatibility
+- **2025-01-14**: **CRITICAL FIX**: Fixed NPX compatibility - ES Module error resolution (v0.1.2)
+  - Renamed index.js to index.cjs for CommonJS compatibility with package.json "type": "module"
+  - Updated bin field to point to index.cjs instead of index.js
+  - Released working version 0.1.2 that resolves "require is not defined in ES module scope" error

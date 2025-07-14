@@ -2,7 +2,7 @@
 
 ## Current Work Focus
 - **COMPLETE**: Full MCP server implementation with stdin/JSON-RPC support
-- **COMPLETE**: Bootstrap `index.js` with compiled/TypeScript fallback
+- **COMPLETE**: Bootstrap `index.cjs` with compiled/TypeScript fallback (FIXED ES Module issue)
 - **COMPLETE**: Core MCP functionality with enhanced scan tool
 - **COMPLETE**: Comprehensive test suite implemented and passing (29 tests, all green)
 - **COMPLETE**: Extended Nikto options support (nolookup, nossl, ssl, port, timeout, vhost)
@@ -13,6 +13,11 @@
   - Tests: 29/29 passing ✅
   - Lint: 0 errors, 1 warning ✅
   - Coverage: 48.66% overall, utils/logger 100%, types 100%, validators 93.1% ✅
+- **COMPLETE**: NPX Compatibility Fix - ES Module Error Resolution (v0.1.2)
+  - Fixed: ReferenceError: require is not defined in ES module scope
+  - Solution: Renamed index.js to index.cjs for CommonJS compatibility
+  - Updated: package.json bin field to point to index.cjs
+  - Released: Version 0.1.2 with working npx execution
 
 ## Recent Changes
 - **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)
