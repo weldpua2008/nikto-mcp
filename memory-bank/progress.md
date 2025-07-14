@@ -80,7 +80,7 @@
    - [ ] Plugin development guide (future enhancement)
 
 ## Current Status
-- **Phase**: **PRODUCTION READY** - Full stdin MCP server implementation complete with Docker mode fix
+- **Phase**: **PRODUCTION READY** - Full stdin MCP server implementation complete with Docker build fix
 - **Blockers**: None
 - **Achievement**: **TEST & LINT & COVERAGE ALL GREEN** (January 14, 2025)
   - Tests: 29/29 passing ✅
@@ -89,6 +89,8 @@
 - **MCP Compatibility**: Verified with MCP Inspector
 - **Execution Modes**: Both compiled (dist/) and TypeScript (tsx/ts-node) working
 - **Docker Mode**: Fixed JSON output with volume mounting and proper file handling
+- **Docker Build**: Fixed Alpine Linux compatibility, creates functional nikto-mcp:latest image
+- **Ready for Release**: Version 0.2.0 prepared with Docker fixes
 
 ## Known Issues
 - None - all critical issues resolved
