@@ -1,0 +1,67 @@
+{
+  "name": "nikto-mcp",
+  "version": "0.1.0",
+  "description": "A secure MCP (Model Context Protocol) server that enables AI agents to interact with Nikto web server scanner",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "nikto",
+    "security",
+    "vulnerability-scanner",
+    "web-security",
+    "ai-tools"
+  ],
+  "author": "weldpua2008",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weldpua2008/nikto-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/weldpua2008/nikto-mcp/issues"
+  },
+  "homepage": "https://github.com/weldpua2008/nikto-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.1",
+    "tslib": "^2.8.1",
+    "winston": "^3.17.0",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.13",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "@typescript-eslint/utils": "^8.36.0",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "globals": "^16.3.0",
+    "jest": "^30.0.4",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.0",
+    "tsx": "^4.20.3",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
