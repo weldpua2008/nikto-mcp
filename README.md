@@ -1,25 +1,20 @@
 # 🔒 Nikto MCP Server
 
-[![CI](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![CI](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-A secure MCP (Model Context Protocol) server that enables AI agents to interact with [Nikto web server scanner](https://github.com/sullo/nikto).
-This server enables LLMs to interact with Nikto scans, designed to mirror and stay in sync with the official Nikto.
+A secure MCP (Model Context Protocol) server that enables AI agents to interact with [Nikto web server scanner](https://github.com/sullo/nikto) for comprehensive web security scanning.
 
 ## 📋 Table of Contents
 
 - [✨ Key Features](#-key-features)
 - [⚡ Quick Start](#-quick-start)
-- [📋 Requirements](#-requirements)
-- [🚀 Installation](#-installation)
+- [🚀 Prerequisites & Installation](#-prerequisites--installation)
 - [🔧 Configuration](#-configuration)
-- [🐳 Docker Support](#-docker-support)
 - [🛠️ Available Tools](#️-available-tools)
 - [🔒 Security Features](#-security-features)
 - [💡 Example Usage](#-example-usage)
 - [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [ License](#-license)
 
 ## ✨ Key Features
 
@@ -38,15 +33,14 @@ This server enables LLMs to interact with Nikto scans, designed to mirror and st
 npx @modelcontextprotocol/inspector nikto-mcp@latest
 ```
 
-## 📋 Requirements
+## 🚀 Prerequisites & Installation
 
+**Requirements:**
 - **Node.js** 20 or newer
+- **Nikto Scanner** - Install and ensure it's accessible in your PATH
 - **MCP Client** - VS Code, Cursor, Windsurf, Claude Desktop, Goose or any other MCP client
 
-## 🚀 Installation
-
-First, install the Nikto MCP server with your client. A typical configuration looks like this:
-
+**Basic Configuration:**
 ```js
 {
   "mcpServers": {
@@ -60,8 +54,17 @@ First, install the Nikto MCP server with your client. A typical configuration lo
 }
 ```
 
+**Install Nikto:**
+```bash
+# macOS
+brew install nikto
 
-[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%257B%2522name%2522%253A%2522niktomcp%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522nikto-mcp%2540latest%2522%255D%257D) [<img alt="Install in VS Code Insiders" src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%257B%2522name%2522%253A%2522niktomcp%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522nikto-mcp%2540latest%2522%255D%257D)
+# Ubuntu/Debian  
+sudo apt-get install nikto
+
+# Or from source
+git clone https://github.com/sullo/nikto
+```
 
 <details><summary><b>Install in VS Code</b></summary>
 You can also install the Nikto MCP server using the VS Code CLI:
@@ -183,22 +186,6 @@ Follow the MCP install [guide](https://github.com/google-gemini/gemini-cli/blob/
 }
 ```
 </details>
-
-### Prerequisites
-
-1. **Nikto Scanner**: Install Nikto and ensure it's accessible
-   ```bash
-   # macOS
-   brew install nikto
-   
-   # Ubuntu/Debian
-   sudo apt-get install nikto
-   
-   # Or from source
-   git clone https://github.com/sullo/nikto
-   ```
-
-2. **Node.js**: Version 18 or higher required
 
 ---
 
@@ -363,11 +350,10 @@ Terminate a currently running scan.
 
 ## 🔒 Security Features
 
-- 🛡️ **Input Sanitization** - All inputs are sanitized to prevent command injection
-- ✅ **Validation** - Comprehensive validation of targets, ports, and hostnames
-- ⚠️ **Conflict Prevention** - Prevents invalid option combinations (e.g., `ssl` + `nossl`)
-- 🔐 **Safe Execution** - Sandboxed command execution with timeouts
-- 📊 **Concurrent Limits** - Configurable limits on simultaneous scans
+- 🛡️ **Input sanitization** to prevent command injection
+- ✅ **Comprehensive validation** of targets, ports, and hostnames  
+- 🔐 **Sandboxed execution** with configurable timeouts and concurrent limits
+- ⚠️ **Safe defaults** and conflict prevention between options
 
 ## 💡 Example Usage
 
@@ -379,14 +365,13 @@ node examples/scan-demo.js
 
 ## 🤝 Contributing
 
-Bug reports, feature requests, and pull requests are welcome!
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/awesome`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin feature/awesome`)
+5. Open a Pull Request
 
-1. Fork the repo
-2. `git checkout -b feature/awesome`
-3. Commit your changes
-4. Push and open a PR
-
-All contributors agree to abide by the project's Code of Conduct.
+Bug reports and feature requests are welcome via [GitHub Issues](https://github.com/weldpua2008/nikto-mcp/issues).
 
 ---
 
