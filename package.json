@@ -1,11 +1,11 @@
 {
   "name": "nikto-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A secure MCP (Model Context Protocol) server that enables AI agents to interact with Nikto web server scanner",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "nikto-mcp": "index.js"
+    "nikto-mcp": "index.cjs"
   },
   "scripts": {
     "build": "tsc",
