@@ -104,7 +104,7 @@
 ## Recent Fixes
 - **CRITICAL**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)
   - Resolved 136 ESLint errors down to 0 errors, 6 warnings
-  - Downgraded TypeScript from 5.8.3 to 5.3.3 for @typescript-eslint v6 compatibility
+  - Updated to @typescript-eslint v8 for TypeScript 5.8.3 compatibility
   - Updated development dependencies (@types/jest, @types/node, eslint packages)
   - Relaxed overly strict ESLint rules while maintaining code quality
 - **CRITICAL**: Fixed Docker mode JSON output issue - added required `-output` parameter and volume mounting

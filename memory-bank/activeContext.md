@@ -96,7 +96,7 @@
 ## Learnings and Insights
 - **CRITICAL**: ESLint strict rules can cause excessive false positives - balance strictness with practicality
 - **CRITICAL**: @typescript-eslint version compatibility is crucial - must match TypeScript version ranges
-- **CRITICAL**: TypeScript 5.8.3 not compatible with @typescript-eslint v6 (supports up to 5.4.0)
+- **CRITICAL**: TypeScript 5.8.3 works correctly with @typescript-eslint v8 (v6 compatibility issue was resolved)
 - **CRITICAL**: ESLint v9 requires migration to flat config format (eslint.config.js)
 - **CRITICAL**: Clean npm install fixes most ESLint dependency issues
 - **CRITICAL**: Docker mode with JSON output requires proper volume mounting and file handling
