@@ -23,6 +23,12 @@
   - Solution: Removed "type": "module" from package.json so compiled code loads as CommonJS
   - Result: npx nikto-mcp@latest now works properly
   - Released: Version 0.1.3 via GitHub Actions automation
+- **COMPLETE**: Docker Build Fix - Alpine Linux Compatibility (v0.2.0 preparation)
+  - Fixed: Dockerfile now uses Alpine package manager (apk) instead of Debian (apt-get)
+  - Fixed: Uses Alpine-compatible adduser command instead of useradd
+  - Fixed: Skips npm prepare script during production build (--ignore-scripts)
+  - Fixed: Copies correct file (index.cjs) instead of index.js
+  - Result: Docker build now succeeds and creates functional nikto-mcp:latest image
 
 ## Recent Changes
 - **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)
@@ -90,7 +96,7 @@
 ## Learnings and Insights
 - **CRITICAL**: ESLint strict rules can cause excessive false positives - balance strictness with practicality
 - **CRITICAL**: @typescript-eslint version compatibility is crucial - must match TypeScript version ranges
-- **CRITICAL**: TypeScript 5.8.3 not compatible with @typescript-eslint v6 (supports up to 5.4.0)
+- **CRITICAL**: TypeScript 5.8.3 works correctly with @typescript-eslint v8 (v6 compatibility issue was resolved)
 - **CRITICAL**: ESLint v9 requires migration to flat config format (eslint.config.js)
 - **CRITICAL**: Clean npm install fixes most ESLint dependency issues
 - **CRITICAL**: Docker mode with JSON output requires proper volume mounting and file handling

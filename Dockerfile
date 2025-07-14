@@ -1,13 +1,11 @@
 # Use the official Nikto Docker image as base
 FROM ghcr.io/sullo/nikto:latest
 
+# Switch to root to install packages
+USER root
+
 # Install Node.js 18 (LTS) for the MCP server
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nodejs npm
 
 # Set working directory
 WORKDIR /app
@@ -15,12 +13,12 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install Node.js dependencies
-RUN npm ci --only=production
+# Install Node.js dependencies (skip prepare script that requires dev deps)
+RUN npm ci --omit=dev --ignore-scripts
 
 # Copy source code
 COPY dist/ ./dist/
-COPY index.js ./
+COPY index.cjs ./
 
 # Set environment variables for Docker mode
 ENV NIKTO_MODE=local
@@ -30,7 +28,7 @@ ENV SCAN_TIMEOUT=3600
 ENV MAX_CONCURRENT_SCANS=3
 
 # Create non-root user for security
-RUN useradd -m -s /bin/bash mcpuser && \
+RUN adduser -D -s /bin/sh mcpuser && \
     chown -R mcpuser:mcpuser /app
 
 USER mcpuser
@@ -43,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD node -e "console.log('MCP Server healthy')" || exit 1
 
 # Default command
-CMD ["node", "index.js"]
+CMD ["node", "index.cjs"]
