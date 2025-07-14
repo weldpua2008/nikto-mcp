@@ -33,7 +33,11 @@ First, install the Nikto MCP server with your client. A typical configuration lo
 }
 ```
 
-[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://insiders.vscode.dev/redirect?url=vscode-insiders:mcp/install?%7B%22niktomcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22nikto-mcp%40latest%22%5D%7D%7D) [<img alt="Install in VS Code Insiders" src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5">](https://insiders.vscode.dev/redirect?url=vscode-insiders:mcp/install?%7B%22niktomcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22nikto-mcp%40latest%22%5D%7D%7D)
+
+
+
+
+[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%257B%2522name%2522%253A%2522niktomcp%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522nikto-mcp%2540latest%2522%255D%257D) [<img alt="Install in VS Code Insiders" src="https://img.shields.io/badge/VS_Code_Insiders-VS_Code_Insiders?style=flat-square&label=Install%20Server&color=24bfa5">](https://insiders.vscode.dev/redirect?url=vscode-insiders:mcp/install?%7B%22niktomcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22nikto-mcp%40latest%22%5D%7D%7D)
 
 
 
