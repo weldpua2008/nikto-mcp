@@ -1,22 +1,49 @@
-# Nikto MCP (Model Context Protocol) server in TypeScript
+# 🔒 Nikto MCP Server
+
+[![CI](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/weldpua2008/nikto-mcp/actions/workflows/ci.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 A secure MCP (Model Context Protocol) server that enables AI agents to interact with [Nikto web server scanner](https://github.com/sullo/nikto).
 This server enables LLMs to interact with Nikto scans, designed to mirror and stay in sync with the official Nikto.
 
-### ✨ Key Features
+## 📋 Table of Contents
 
-- ✅ 100% TypeScript source – fully typed, production-ready
-- 📊 Multiple output formats: JSON (machine-readable) and rich CLI (human-readable)
-- 🌐 Optional REST API for remote scan management
-- 🛡️ Secure by default: sandboxed execution, sensible timeouts, and minimal privileges
-- 🐳 Docker support with proper volume mounting and JSON output handling
+- [✨ Key Features](#-key-features)
+- [⚡ Quick Start](#-quick-start)
+- [📋 Requirements](#-requirements)
+- [🚀 Installation](#-installation)
+- [🔧 Configuration](#-configuration)
+- [🐳 Docker Support](#-docker-support)
+- [🛠️ Available Tools](#️-available-tools)
+- [🔒 Security Features](#-security-features)
+- [💡 Example Usage](#-example-usage)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+## ✨ Key Features
+
+- ✅ **100% TypeScript** – fully typed, production-ready
+- 📊 **Multiple output formats** – JSON (machine-readable) and rich CLI (human-readable)
+- 🌐 **Optional REST API** for remote scan management
+- 🛡️ **Secure by default** – sandboxed execution, sensible timeouts, and minimal privileges
+- 🐳 **Docker support** with proper volume mounting and JSON output handling
+
 ---
 
-### Requirements
-- Node.js 20 or newer
-- VS Code, Cursor, Windsurf, Claude Desktop, Goose or any other MCP client
+## ⚡ Quick Start
 
-### Getting started
+```bash
+# Install and run with MCP Inspector
+npx @modelcontextprotocol/inspector nikto-mcp@latest
+```
+
+## 📋 Requirements
+
+- **Node.js** 20 or newer
+- **MCP Client** - VS Code, Cursor, Windsurf, Claude Desktop, Goose or any other MCP client
+
+## 🚀 Installation
 
 First, install the Nikto MCP server with your client. A typical configuration looks like this:
 
@@ -175,12 +202,13 @@ Follow the MCP install [guide](https://github.com/google-gemini/gemini-cli/blob/
 
 ---
 
-## 🚀 Quick Start
+## 🔧 Configuration
 
-### Running the MCP Server via MCP inspector
+### MCP Inspector (Development)
 
 ```bash
- npx @modelcontextprotocol/inspector  nikto-mcp@latest          
+# Install and run with MCP Inspector
+npx @modelcontextprotocol/inspector nikto-mcp@latest
 ```
 
 ### MCP Client Configuration
@@ -213,11 +241,7 @@ npm install -g @modelcontextprotocol/inspector
 npx @modelcontextprotocol/inspector node index.js
 ```
 
-### Docker Support
-
-The MCP server supports running Nikto via Docker for better isolation and consistency.
-
-#### Environment Variables
+### Environment Variables
 
 - `NIKTO_MODE` - Execution mode: `local` or `docker` (default: `local`)
 - `NIKTO_DOCKER_IMAGE` - Docker image to use (default: `ghcr.io/sullo/nikto:latest`)
@@ -227,9 +251,15 @@ The MCP server supports running Nikto via Docker for better isolation and consis
 - `SCAN_TIMEOUT` - Maximum scan duration in seconds (default: `3600`)
 - `MAX_CONCURRENT_SCANS` - Maximum concurrent scans (default: `3`)
 
-**Note**: JSON output automatically uses unique filenames per scan (`/tmp/nikto-scan-<uuid>.json`) to prevent concurrent scan collisions.
+> **Note**: JSON output automatically uses unique filenames per scan (`/tmp/nikto-scan-<uuid>.json`) to prevent concurrent scan collisions.
 
-#### Docker Mode Configuration
+---
+
+## 🐳 Docker Support
+
+The MCP server supports running Nikto via Docker for better isolation and consistency.
+
+### Docker Mode Configuration
 
 ```json
 {
@@ -248,7 +278,7 @@ The MCP server supports running Nikto via Docker for better isolation and consis
 }
 ```
 
-#### Building and Running with Docker
+### Building and Running with Docker
 
 ```bash
 # Build the MCP server with embedded Nikto
@@ -266,7 +296,7 @@ docker run --rm -i \
 
 ---
 
-## Available Tools
+## 🛠️ Available Tools
 
 ### `scan` - Run Nikto Security Scan
 
@@ -331,17 +361,17 @@ Terminate a currently running scan.
 }
 ```
 
-## Security Features
+## 🔒 Security Features
 
-- **Input Sanitization**: All inputs are sanitized to prevent command injection
-- **Validation**: Comprehensive validation of targets, ports, and hostnames
-- **Conflict Prevention**: Prevents invalid option combinations (e.g., `ssl` + `nossl`)
-- **Safe Execution**: Sandboxed command execution with timeouts
-- **Concurrent Limits**: Configurable limits on simultaneous scans
+- 🛡️ **Input Sanitization** - All inputs are sanitized to prevent command injection
+- ✅ **Validation** - Comprehensive validation of targets, ports, and hostnames
+- ⚠️ **Conflict Prevention** - Prevents invalid option combinations (e.g., `ssl` + `nossl`)
+- 🔐 **Safe Execution** - Sandboxed command execution with timeouts
+- 📊 **Concurrent Limits** - Configurable limits on simultaneous scans
 
-## Example Usage
+## 💡 Example Usage
 
-See `examples/scan-demo.js` for comprehensive examples of all supported options and use cases.
+See `examples/scan-demo.js` for comprehensive examples of all supported options and use cases:
 
 ```bash
 node examples/scan-demo.js
