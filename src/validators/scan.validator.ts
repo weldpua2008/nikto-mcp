@@ -63,7 +63,9 @@ export function validateScanOptions(options: unknown): ScanOptions {
     return scanOptionsSchema.parse(options);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const message = error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+      const message = error.issues
+        .map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`)
+        .join(', ');
       throw new Error(`Validation error: ${message}`);
     }
     throw error;
