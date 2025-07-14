@@ -39,6 +39,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.repository_owner == 'weldpua2008'
+    permissions:
+      contents: read
+      id-token: write
     
     steps:
     - name: Checkout code
