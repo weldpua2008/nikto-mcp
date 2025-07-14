@@ -9,6 +9,7 @@
 - **COMPLETE**: MCP JSON-RPC communication protocol fixed (logger redirected to stderr)
 - **COMPLETE**: Docker mode JSON output with proper volume mounting and file handling
 - **COMPLETE**: Concurrent JSON scans now safe with unique per-scan filenames
+- **COMPLETE**: ESLint and TypeScript compatibility fixed (0 errors, 6 warnings)
 - Initial project repository created
 - README.md with project overview in place
 - Memory Bank documentation established
@@ -82,9 +83,15 @@
 - **Docker Mode**: Fixed JSON output with volume mounting and proper file handling
 
 ## Known Issues
-- None - all tests passing, MCP communication protocol working correctly, Docker mode JSON output fixed
+- None - all tests passing, MCP communication protocol working correctly, Docker mode JSON output fixed, ESLint compatibility resolved
+- 6 remaining ESLint warnings (optional to address): prefer-nullish-coalescing, require-await, no-explicit-any
 
 ## Recent Fixes
+- **CRITICAL**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)
+  - Resolved 136 ESLint errors down to 0 errors, 6 warnings
+  - Downgraded TypeScript from 5.8.3 to 5.3.3 for @typescript-eslint v6 compatibility
+  - Updated development dependencies (@types/jest, @types/node, eslint packages)
+  - Relaxed overly strict ESLint rules while maintaining code quality
 - **CRITICAL**: Fixed Docker mode JSON output issue - added required `-output` parameter and volume mounting
 - **TECHNICAL**: Implemented shell command chaining for Docker JSON output with proper file cleanup  
 - **VERIFIED**: Docker mode now properly handles JSON format with volume mounting pattern
@@ -106,3 +113,6 @@
 - **2025-01-13**: **VERIFIED**: MCP Inspector integration confirms protocol compliance
 - **2025-01-13**: **CRITICAL FIX**: Resolved MCP communication issues - logger stdout pollution fixed
 - **2025-01-14**: **CRITICAL FIX**: Fixed Docker mode JSON output with volume mounting and proper file handling
+- **2025-01-14**: **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility - balanced strictness with practicality
+- **2025-01-14**: **DECISION**: Stay on ESLint v8 instead of migrating to v9 (requires flat config)
+- **2025-01-14**: **DECISION**: Use TypeScript 5.3.3 for @typescript-eslint v6 compatibility

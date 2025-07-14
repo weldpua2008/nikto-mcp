@@ -26,14 +26,14 @@ describe('NiktoService', () => {
       };
 
       const result = await niktoService.startScan(options);
-      
+
       expect(result.status).toBe(ScanStatus.COMPLETED);
       expect(result.target).toBe('example.com');
-      
+
       // Verify the scan was stored
       const status = niktoService.getScanStatus(result.scanId);
       expect(status.status).toBe(ScanStatus.COMPLETED);
-      
+
       // The output should contain the dry run command
       const scan = (niktoService as any).activeScans.get(result.scanId);
       expect(scan.output[0]).toContain('DRY RUN (local mode): nikto -h example.com');
@@ -54,10 +54,10 @@ describe('NiktoService', () => {
       };
 
       const result = await niktoService.startScan(options);
-      
+
       const scan = (niktoService as any).activeScans.get(result.scanId);
       const command = scan.output[0];
-      
+
       expect(command).toContain('-h https://example.com');
       expect(command).toContain('-p 8443');
       expect(command).toContain('-ssl');
@@ -76,10 +76,10 @@ describe('NiktoService', () => {
       };
 
       const result = await niktoService.startScan(options);
-      
+
       const scan = (niktoService as any).activeScans.get(result.scanId);
       const command = scan.output[0];
-      
+
       expect(command).toContain('-nossl');
       expect(command).not.toContain('-ssl');
     });
@@ -91,10 +91,10 @@ describe('NiktoService', () => {
       };
 
       const result = await niktoService.startScan(options);
-      
+
       const scan = (niktoService as any).activeScans.get(result.scanId);
       const command = scan.output[0];
-      
+
       expect(command).not.toContain('-ssl');
       expect(command).not.toContain('-nossl');
     });
@@ -109,7 +109,7 @@ describe('NiktoService', () => {
       await niktoService.startScan(options2);
 
       const activeScans = niktoService.getActiveScans();
-      
+
       expect(activeScans).toHaveLength(2);
       expect(activeScans[0].target).toBe('example1.com');
       expect(activeScans[1].target).toBe('example2.com');

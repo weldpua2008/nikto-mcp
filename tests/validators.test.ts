@@ -8,7 +8,7 @@ describe('Validators', () => {
         port: 443,
         ssl: true,
         timeout: 1800,
-        outputFormat: 'json' as const
+        outputFormat: 'json' as const,
       };
 
       const result = validateScanOptions(options);
@@ -16,13 +16,13 @@ describe('Validators', () => {
         ...options,
         nossl: false,
         nolookup: false,
-        dryRun: false
+        dryRun: false,
       });
     });
 
     it('should apply default values', () => {
       const options = {
-        target: 'example.com'
+        target: 'example.com',
       };
 
       const result = validateScanOptions(options);
@@ -34,7 +34,7 @@ describe('Validators', () => {
 
     it('should validate IP addresses', () => {
       const options = {
-        target: '192.168.1.1'
+        target: '192.168.1.1',
       };
 
       const result = validateScanOptions(options);
@@ -47,30 +47,36 @@ describe('Validators', () => {
     });
 
     it('should reject invalid ports', () => {
-      expect(() => validateScanOptions({ 
-        target: 'example.com', 
-        port: 0 
-      })).toThrow('Validation error');
-      
-      expect(() => validateScanOptions({ 
-        target: 'example.com', 
-        port: 70000 
-      })).toThrow('Validation error');
+      expect(() =>
+        validateScanOptions({
+          target: 'example.com',
+          port: 0,
+        }),
+      ).toThrow('Validation error');
+
+      expect(() =>
+        validateScanOptions({
+          target: 'example.com',
+          port: 70000,
+        }),
+      ).toThrow('Validation error');
     });
 
     it('should reject conflicting ssl and nossl options', () => {
-      expect(() => validateScanOptions({
-        target: 'example.com',
-        ssl: true,
-        nossl: true
-      })).toThrow('Cannot specify both ssl and nossl options');
+      expect(() =>
+        validateScanOptions({
+          target: 'example.com',
+          ssl: true,
+          nossl: true,
+        }),
+      ).toThrow('Cannot specify both ssl and nossl options');
     });
 
     it('should validate new options with defaults', () => {
       const options = {
         target: 'example.com',
         nolookup: true,
-        vhost: 'test.example.com'
+        vhost: 'test.example.com',
       };
 
       const result = validateScanOptions(options);
@@ -81,16 +87,18 @@ describe('Validators', () => {
     });
 
     it('should reject invalid vhost', () => {
-      expect(() => validateScanOptions({
-        target: 'example.com',
-        vhost: 'invalid..hostname'
-      })).toThrow('Invalid vhost: must be a valid hostname');
+      expect(() =>
+        validateScanOptions({
+          target: 'example.com',
+          vhost: 'invalid..hostname',
+        }),
+      ).toThrow('Invalid vhost: must be a valid hostname');
     });
 
     it('should validate dry run mode', () => {
       const options = {
         target: 'example.com',
-        dryRun: true
+        dryRun: true,
       };
 
       const result = validateScanOptions(options);

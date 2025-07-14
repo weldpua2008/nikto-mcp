@@ -3,12 +3,7 @@ import { randomUUID } from 'crypto';
 import { createLogger } from '../utils/logger';
 import { config } from '../config/index';
 import { sanitizeInput } from '../validators/scan.validator';
-import type { 
-  ScanOptions, 
-  ScanResult, 
-  ActiveScan, 
-  NiktoFinding 
-} from '../types/scan.types';
+import type { ScanOptions, ScanResult, ActiveScan, NiktoFinding } from '../types/scan.types';
 import { ScanStatus } from '../types/scan.types';
 
 const logger = createLogger('NiktoService');
@@ -35,10 +30,10 @@ export class NiktoService {
 
   async startScan(options: ScanOptions): Promise<ScanResult> {
     const scanId = randomUUID();
-    
+
     // Check concurrent scan limit
     const runningScans = Array.from(this.activeScans.values()).filter(
-      (scan) => scan.status === ScanStatus.RUNNING
+      (scan) => scan.status === ScanStatus.RUNNING,
     ).length;
 
     if (runningScans >= config.maxConcurrentScans) {
@@ -62,15 +57,15 @@ export class NiktoService {
 
       if (config.niktoMode === 'docker') {
         const niktoArgs = this.buildNiktoArgs(options, scanId);
-        
+
         if (options.outputFormat === 'json') {
           const tmpDir = process.env['TMPDIR'] || process.cwd();
           const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
-          
+
           command = 'sh';
           args = [
             '-c',
-            `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+            `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`,
           ];
         } else {
           command = 'docker';
@@ -79,7 +74,7 @@ export class NiktoService {
             '--rm',
             `--network=${config.dockerNetworkMode}`,
             config.dockerImage,
-            ...niktoArgs
+            ...niktoArgs,
           ];
         }
       } else {
@@ -91,7 +86,7 @@ export class NiktoService {
       logger.debug(`Dry run for scan ${scanId}: ${fullCommand}`);
       activeScan.output.push(`DRY RUN (${config.niktoMode} mode): ${fullCommand}`);
       activeScan.status = ScanStatus.COMPLETED;
-      
+
       return {
         scanId,
         status: ScanStatus.COMPLETED,
@@ -129,25 +124,22 @@ export class NiktoService {
     }
   }
 
-  private async spawnNiktoProcess(
-    options: ScanOptions, 
-    scanId: string
-  ): Promise<ChildProcess> {
+  private async spawnNiktoProcess(options: ScanOptions, scanId: string): Promise<ChildProcess> {
     let command: string;
     let args: string[];
 
     if (config.niktoMode === 'docker') {
       const niktoArgs = this.buildNiktoArgs(options, scanId);
-      
+
       if (options.outputFormat === 'json') {
         // For JSON output in docker mode, use volume mounting and post-process
         const tmpDir = process.env['TMPDIR'] || process.cwd();
         const hostOutputFile = `${tmpDir}/nikto-scan-${scanId}.json`;
-        
+
         command = 'sh';
         args = [
           '-c',
-          `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`
+          `docker run --rm --network=${config.dockerNetworkMode} -v ${tmpDir}:/tmp ${config.dockerImage} ${niktoArgs.join(' ')} && cat ${hostOutputFile} && rm -f ${hostOutputFile}`,
         ];
       } else {
         command = 'docker';
@@ -156,15 +148,17 @@ export class NiktoService {
           '--rm',
           `--network=${config.dockerNetworkMode}`,
           config.dockerImage,
-          ...niktoArgs
+          ...niktoArgs,
         ];
       }
     } else {
       command = config.niktoBinary;
       args = this.buildNiktoArgs(options, scanId);
     }
-    
-    logger.info(`Starting Nikto scan ${scanId} in ${config.niktoMode} mode with command: ${command} ${args.join(' ')}`);
+
+    logger.info(
+      `Starting Nikto scan ${scanId} in ${config.niktoMode} mode with command: ${command} ${args.join(' ')}`,
+    );
 
     const niktoProcess = spawn(command, args, {
       env: { ...process.env, LANG: 'C' }, // Ensure consistent output
@@ -249,17 +243,17 @@ export class NiktoService {
 
     // Additional security options
     args.push('-nointeractive'); // Don't prompt for input
-    
+
     // Log the full command for debugging
     const command = `${config.niktoBinary} ${args.join(' ')}`;
     logger.debug(`Built Nikto command: ${command}`);
-    
+
     return args;
   }
 
   getScanStatus(scanId: string): ScanResult {
     const scan = this.activeScans.get(scanId);
-    
+
     if (!scan) {
       throw new Error(`Scan ${scanId} not found`);
     }
@@ -285,7 +279,7 @@ export class NiktoService {
 
   async stopScan(scanId: string): Promise<void> {
     const scan = this.activeScans.get(scanId);
-    
+
     if (!scan) {
       throw new Error(`Scan ${scanId} not found`);
     }
@@ -301,7 +295,9 @@ export class NiktoService {
         logger.info(`Scan ${scanId} cancelled`);
       } catch (error) {
         logger.error(`Failed to stop scan ${scanId}:`, error);
-        throw new Error(`Failed to stop scan: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to stop scan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
       }
     }
   }
@@ -321,7 +317,7 @@ export class NiktoService {
       try {
         // Parse JSON output - Nikto JSON format: [{"host":"...","vulnerabilities":[...]}]
         const jsonData = JSON.parse(output);
-        
+
         if (Array.isArray(jsonData)) {
           for (const hostData of jsonData) {
             if (hostData.vulnerabilities && Array.isArray(hostData.vulnerabilities)) {
@@ -364,7 +360,7 @@ export class NiktoService {
 
   private determineSeverity(line: string): NiktoFinding['severity'] {
     const lowerLine = line.toLowerCase();
-    
+
     if (lowerLine.includes('vulnerability') || lowerLine.includes('exploit')) {
       return 'high';
     }
@@ -374,23 +370,32 @@ export class NiktoService {
     if (lowerLine.includes('information') || lowerLine.includes('disclosure')) {
       return 'low';
     }
-    
+
     return 'info';
   }
 
   private determineSeverityFromVuln(vuln: any): NiktoFinding['severity'] {
     const msg = (vuln.msg || '').toLowerCase();
-    
-    if (msg.includes('vulnerability') || msg.includes('exploit') || msg.includes('sql injection') || msg.includes('xss')) {
+
+    if (
+      msg.includes('vulnerability') ||
+      msg.includes('exploit') ||
+      msg.includes('sql injection') ||
+      msg.includes('xss')
+    ) {
       return 'high';
     }
     if (msg.includes('outdated') || msg.includes('version') || msg.includes('deprecated')) {
       return 'medium';
     }
-    if (msg.includes('information') || msg.includes('disclosure') || msg.includes('header missing')) {
+    if (
+      msg.includes('information') ||
+      msg.includes('disclosure') ||
+      msg.includes('header missing')
+    ) {
       return 'low';
     }
-    
+
     return 'info';
   }
 
@@ -401,14 +406,14 @@ export class NiktoService {
         const url = new URL(target);
         return url.port !== '';
       }
-      
+
       // Check if target is hostname:port format
       const parts = target.split(':');
       if (parts.length === 2 && parts[1]) {
         const port = parseInt(parts[1], 10);
         return !isNaN(port) && port > 0 && port <= 65535;
       }
-      
+
       return false;
     } catch {
       // If URL parsing fails, assume no port
