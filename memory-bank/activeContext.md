@@ -18,6 +18,11 @@
   - Solution: Renamed index.js to index.cjs for CommonJS compatibility
   - Updated: package.json bin field to point to index.cjs
   - Released: Version 0.1.2 with working npx execution
+- **COMPLETE**: Final CommonJS Fix - Type Module Removal (v0.1.3)
+  - Fixed: exports is not defined error from dist/index.js being treated as ES module
+  - Solution: Removed "type": "module" from package.json so compiled code loads as CommonJS
+  - Result: npx nikto-mcp@latest now works properly
+  - Released: Version 0.1.3 via GitHub Actions automation
 
 ## Recent Changes
 - **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)

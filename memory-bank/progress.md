@@ -133,3 +133,7 @@
   - Renamed index.js to index.cjs for CommonJS compatibility with package.json "type": "module"
   - Updated bin field to point to index.cjs instead of index.js
   - Released working version 0.1.2 that resolves "require is not defined in ES module scope" error
+- **2025-01-14**: **FINAL FIX**: Completed CommonJS compatibility - Type Module Removal (v0.1.3)
+  - Removed "type": "module" from package.json to fix dist/index.js loading as CommonJS
+  - Fixed "exports is not defined" error when npx executed compiled dist/index.js
+  - Released working version 0.1.3 via GitHub Actions automation - npx nikto-mcp@latest now works
