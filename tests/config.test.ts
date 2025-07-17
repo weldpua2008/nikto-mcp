@@ -1,9 +1,12 @@
 import { config } from '../src/config/index';
 
+// Read package.json to get the expected version
+const packageJson = require('../package.json');
+
 describe('Configuration', () => {
   it('should load default configuration', () => {
     expect(config).toBeDefined();
-    expect(config.version).toBe('0.3.0');
+    expect(config.version).toBe(packageJson.version);
     expect(config.niktoBinary).toBeDefined();
     expect(config.maxConcurrentScans).toBeGreaterThan(0);
     expect(config.defaultTimeout).toBeGreaterThan(0);
