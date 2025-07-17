@@ -3,7 +3,7 @@ import { config } from '../src/config/index';
 describe('Configuration', () => {
   it('should load default configuration', () => {
     expect(config).toBeDefined();
-    expect(config.version).toBe('0.1.0');
+    expect(config.version).toBe('0.3.0');
     expect(config.niktoBinary).toBeDefined();
     expect(config.maxConcurrentScans).toBeGreaterThan(0);
     expect(config.defaultTimeout).toBeGreaterThan(0);
