@@ -235,6 +235,7 @@ npx @modelcontextprotocol/inspector node index.js
 - `NIKTO_DOCKER_NETWORK` - Docker network mode (default: `host`)
 - `NIKTO_BINARY` - Path to Nikto executable for local mode (default: `nikto`)
 - `LOG_LEVEL` - Logging level: debug, info, warn, error (default: `info`)
+- `MCP_STDOUT_LOGS` - Allow info/debug logs to stdout: `allow` or unset (default: discarded for MCP compatibility)
 - `SCAN_TIMEOUT` - Maximum scan duration in seconds (default: `3600`)
 - `MAX_CONCURRENT_SCANS` - Maximum concurrent scans (default: `3`)
 
