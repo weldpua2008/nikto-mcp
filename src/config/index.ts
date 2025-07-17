@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// Read version from package.json
+const packageJsonPath = join(__dirname, '../../package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 
 const configSchema = z.object({
   version: z.string(),
@@ -16,7 +22,7 @@ export type Config = z.infer<typeof configSchema>;
 
 function loadConfig(): Config {
   return {
-    version: '0.3.0',
+    version: packageJson.version,
     niktoBinary: process.env['NIKTO_BINARY'] ?? 'nikto',
     niktoMode: (process.env['NIKTO_MODE'] as Config['niktoMode']) ?? 'local',
     dockerImage: process.env['NIKTO_DOCKER_IMAGE'] ?? 'ghcr.io/sullo/nikto:latest',
