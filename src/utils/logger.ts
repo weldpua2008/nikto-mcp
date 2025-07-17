@@ -8,17 +8,33 @@ const logFormat = winston.format.combine(
   winston.format.json(),
 );
 
+function getLogTransports(): winston.transport[] {
+  // In MCP mode, we need to keep stdout clean for JSON-RPC protocol
+  // Only errors and warnings should go to stderr, while info/debug should be discarded
+  if (process.env['MCP_STDOUT_LOGS'] !== 'allow') {
+    return [
+      new winston.transports.Console({
+        stderrLevels: ['error', 'warn'],
+        consoleWarnLevels: [],
+        level: 'warn', // Only log warn and error levels
+      }),
+    ];
+  }
+
+  // In development/testing mode, allow normal console output
+  return [
+    new winston.transports.Console({
+      stderrLevels: ['error', 'warn'],
+    }),
+  ];
+}
+
 export function createLogger(service: string): winston.Logger {
   return winston.createLogger({
     level: config.logLevel,
     format: logFormat,
     defaultMeta: { service },
-    transports: [
-      // Send all logs to stderr to avoid polluting stdout used by MCP JSON-RPC
-      new winston.transports.Stream({
-        stream: process.stderr,
-      }),
-    ],
+    transports: getLogTransports(),
   });
 }
 

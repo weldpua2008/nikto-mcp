@@ -16,7 +16,7 @@ export type Config = z.infer<typeof configSchema>;
 
 function loadConfig(): Config {
   return {
-    version: '0.1.0',
+    version: '0.3.0',
     niktoBinary: process.env['NIKTO_BINARY'] ?? 'nikto',
     niktoMode: (process.env['NIKTO_MODE'] as Config['niktoMode']) ?? 'local',
     dockerImage: process.env['NIKTO_DOCKER_IMAGE'] ?? 'ghcr.io/sullo/nikto:latest',

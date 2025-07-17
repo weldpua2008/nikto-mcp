@@ -31,6 +31,13 @@
   - Result: Docker build now succeeds and creates functional nikto-mcp:latest image
 
 ## Recent Changes
+- **CRITICAL FIX**: Fixed info logs appearing as "Error output from MCP server" (2025-01-17)
+- **ROOT CAUSE**: Winston Console transport was sending ALL log levels (including info) to stderr, causing MCP clients to interpret info logs as errors
+- **SOLUTION**: Modified logger configuration to suppress info/debug logs in MCP mode, only allow warn/error levels to stderr
+- **NEW FEATURE**: Added `MCP_STDOUT_LOGS=allow` environment variable for development debugging
+- **RESULT**: Clean MCP JSON-RPC output, no more false error reports, proper log level separation
+- **TECHNICAL**: Changed from single Stream transport to conditional Console transport with level filtering
+- **VERIFIED**: MCP communication now works without log pollution, development mode still allows full logging
 - **CRITICAL FIX**: Fixed ESLint and TypeScript compatibility issues (2025-01-14)
 - **ROOT CAUSE**: ESLint configuration was too strict causing 136 errors and TypeScript 5.8.3 incompatible with @typescript-eslint v6
 - **SOLUTION**: Relaxed ESLint rules, updated dependencies, downgraded TypeScript to 5.3.3
