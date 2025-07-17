@@ -57,6 +57,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Sync package.json version to tag
+      run: |
+        TAG_VERSION="${GITHUB_REF_NAME#v}"
+        npm version "$TAG_VERSION" --no-git-tag-version --allow-same-version
+      
     - name: Build package
       run: npm run build
       
