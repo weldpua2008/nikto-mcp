@@ -2,6 +2,51 @@ import { z } from 'zod';
 import type { ScanOptions } from '../types/scan.types';
 import { config } from '../config/index';
 
+// Helper functions for type coercion
+const coerceToNumber = (value: unknown): number | undefined => {
+  if (typeof value === 'number') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      return undefined;
+    }
+    const num = Number(trimmed);
+    if (!isNaN(num)) {
+      return num;
+    }
+  }
+  return value as number; // Let Zod handle the validation error
+};
+
+const coerceToBoolean = (value: unknown): boolean | undefined => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim().toLowerCase();
+    if (trimmed === 'true' || trimmed === '1') {
+      return true;
+    }
+    if (trimmed === 'false' || trimmed === '0') {
+      return false;
+    }
+    if (trimmed === '') {
+      return undefined;
+    }
+  }
+  if (typeof value === 'number') {
+    if (value === 1) {
+      return true;
+    }
+    if (value === 0) {
+      return false;
+    }
+  }
+  return value as boolean; // Let Zod handle the validation error
+};
+
 const scanOptionsSchema = z
   .object({
     target: z
@@ -33,11 +78,14 @@ const scanOptionsSchema = z
 
         return urlPattern.test(value) || ipPattern.test(value) || hostnamePattern.test(value);
       }, 'Invalid target: must be a valid URL, IP address, or hostname'),
-    port: z.number().int().min(1).max(65535).optional().default(80),
-    ssl: z.boolean().optional().default(false),
-    nossl: z.boolean().optional().default(false),
-    nolookup: z.boolean().optional().default(false),
-    timeout: z.number().positive().optional().default(config.defaultTimeout),
+    port: z.preprocess(coerceToNumber, z.number().int().min(1).max(65535).optional().default(80)),
+    ssl: z.preprocess(coerceToBoolean, z.boolean().optional().default(false)),
+    nossl: z.preprocess(coerceToBoolean, z.boolean().optional().default(false)),
+    nolookup: z.preprocess(coerceToBoolean, z.boolean().optional().default(false)),
+    timeout: z.preprocess(
+      coerceToNumber,
+      z.number().positive().optional().default(config.defaultTimeout),
+    ),
     vhost: z
       .string()
       .optional()
@@ -51,7 +99,7 @@ const scanOptionsSchema = z
         return hostnamePattern.test(value);
       }, 'Invalid vhost: must be a valid hostname'),
     outputFormat: z.enum(['json', 'text']).optional().default('json'),
-    dryRun: z.boolean().optional().default(false),
+    dryRun: z.preprocess(coerceToBoolean, z.boolean().optional().default(false)),
   })
   .refine((data) => !(data.ssl && data.nossl), {
     message: 'Cannot specify both ssl and nossl options',
