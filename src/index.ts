@@ -15,6 +15,81 @@ import { config } from './config/index';
 
 const logger = createLogger('MCP-Server');
 
+// Handle command line arguments
+function handleCommandLineArgs(): boolean {
+  const args = process.argv.slice(2);
+  
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`
+Nikto MCP Server v${config.version}
+
+DESCRIPTION:
+  A secure MCP (Model Context Protocol) server that enables AI agents to interact
+  with Nikto web server scanner for vulnerability assessment.
+
+USAGE:
+  nikto-mcp [OPTIONS]
+
+OPTIONS:
+  -h, --help     Show this help message and exit
+  --version      Show version information and exit
+
+MCP SERVER MODE:
+  When run without arguments, starts as an MCP server listening on stdin for
+  JSON-RPC messages from MCP clients (like Claude Desktop or other AI agents).
+
+AVAILABLE MCP TOOLS:
+  scan           Run a Nikto scan against a target
+  scan_status    Get the status of a running scan  
+  stop_scan      Stop a running scan
+
+AVAILABLE MCP RESOURCES:
+  nikto://scans  List of currently active Nikto scans
+  nikto://config Current Nikto MCP server configuration
+
+EXAMPLES:
+  # Start MCP server (for use with AI agents)
+  nikto-mcp
+
+  # Show help
+  nikto-mcp --help
+
+  # Show version
+  nikto-mcp --version
+
+  # Run with Docker
+  docker run -i nikto-mcp:latest
+
+  # Run with Docker and custom Nikto binary path
+  docker run -i -e NIKTO_BINARY=/usr/local/bin/nikto nikto-mcp:latest
+
+CONFIGURATION:
+  ### Environment Variables
+
+  - NIKTO_MODE - Execution mode: local or docker (default: local)
+  - NIKTO_BINARY - Path to Nikto executable for local mode (default: nikto)
+  - NIKTO_DOCKER_IMAGE - Docker image to use (default: ghcr.io/sullo/nikto:latest)
+  - NIKTO_DOCKER_NETWORK - Docker network mode (default: host)
+  - MCP_PORT - Port for MCP server (optional)
+  - LOG_LEVEL - Logging level: debug, info, warn, error (default: info)
+  - SCAN_TIMEOUT - Maximum scan duration in seconds (default: 3600)
+  - MAX_CONCURRENT_SCANS - Maximum concurrent scans (default: 3)
+  - MCP_STDOUT_LOGS - Set to 'allow' for development debugging
+  - TMPDIR - Temporary directory for scan outputs (default: /tmp)
+
+For more information, visit: https://github.com/weldpua2008/nikto-mcp
+`);
+    return true;
+  }
+
+  if (args.includes('--version')) {
+    console.log(`nikto-mcp v${config.version}`);
+    return true;
+  }
+
+  return false;
+}
+
 class NiktoMCPServer {
   private server: Server;
   private niktoService: NiktoService;
@@ -250,6 +325,12 @@ class NiktoMCPServer {
     await this.server.connect(transport);
     logger.info('Nikto MCP server started');
   }
+}
+
+// Handle command line arguments first
+if (handleCommandLineArgs()) {
+  // Help or version was shown, exit cleanly
+  process.exit(0);
 }
 
 // Start the server
