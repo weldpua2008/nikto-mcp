@@ -29,7 +29,7 @@
   - Fixed: Skips npm prepare script during production build (--ignore-scripts)
   - Fixed: Copies correct file (index.cjs) instead of index.js
   - Result: Docker build now succeeds and creates functional nikto-mcp:latest image
-- **COMPLETE**: Command Line Help Fix - Hanging --help Issue Resolution (v0.4.0+)
+- **COMPLETE**: Command Line Help Fix - Hanging --help Issue Resolution (v0.7.0)
   - Fixed: npx nikto-mcp@latest --help command was hanging indefinitely
   - Root Cause: Application was starting MCP server without checking command-line arguments
   - Solution: Added argument parsing before server initialization
@@ -37,6 +37,13 @@
   - Result: --help displays comprehensive usage information and exits cleanly
   - Result: --version displays version information and exits cleanly
   - Verified: All 39 tests still passing after changes
+- **COMPLETE**: MCP SDK Migration - Tools List Discovery Fix (v0.7.0)
+  - Fixed: echo '{"id": "1", "method": "tools/list", "params": {}}' returning no tools
+  - Root Cause: Old MCP SDK API was deprecated, tools not properly registered
+  - Solution: Migrated to latest @modelcontextprotocol/sdk v1.17.1 with new McpServer API
+  - Implementation: Used server.registerTool() with zod schemas for proper tool registration
+  - Result: tools/list now correctly returns all 3 tools (scan, scan_status, stop_scan)
+  - Verified: JSON-RPC response includes proper tool schemas and descriptions
 - **COMPLETE**: TypeScript MCP Client Examples Implementation (February 8, 2025)
   - Created: `examples/` folder with comprehensive MCP client examples
   - Added: `examples/mcp-client.ts` - TypeScript MCP client using official SDK

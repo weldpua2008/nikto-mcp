@@ -1,13 +1,6 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  ListResourcesRequestSchema,
-  ReadResourceRequestSchema,
-  ErrorCode,
-  McpError,
-} from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 import { createLogger } from './utils/logger';
 import { NiktoService } from './services/nikto.service';
 import { validateScanOptions } from './validators/scan.validator';
@@ -91,233 +84,162 @@ For more information, visit: https://github.com/weldpua2008/nikto-mcp
 }
 
 class NiktoMCPServer {
-  private server: Server;
+  private server: McpServer;
   private niktoService: NiktoService;
 
   constructor() {
-    this.server = new Server(
-      {
-        name: 'nikto-mcp',
-        version: config.version,
-      },
-      {
-        capabilities: {
-          tools: {},
-          resources: {},
-        },
-      },
-    );
+    this.server = new McpServer({
+      name: 'nikto-mcp',
+      version: config.version,
+    });
 
     this.niktoService = new NiktoService();
-    this.setupHandlers();
+    this.setupTools();
+    this.setupResources();
   }
 
-  private setupHandlers(): void {
-    // List available tools
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
-      tools: [
-        {
-          name: 'scan',
-          description: 'Run a Nikto scan against a target',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              target: {
-                type: 'string',
-                description: 'Target URL or IP address to scan',
-              },
-              port: {
-                type: 'number',
-                description: 'Port number (default: 80)',
-                default: 80,
-              },
-              ssl: {
-                type: 'boolean',
-                description: 'Use SSL/HTTPS (default: false)',
-                default: false,
-              },
-              nossl: {
-                type: 'boolean',
-                description: 'Disable SSL (default: false)',
-                default: false,
-              },
-              nolookup: {
-                type: 'boolean',
-                description: 'Disable DNS lookups (default: false)',
-                default: false,
-              },
-              timeout: {
-                type: 'number',
-                description: 'Scan timeout in seconds (default: 3600)',
-                default: 3600,
-              },
-              vhost: {
-                type: 'string',
-                description: 'Virtual host for the Host header',
-              },
-              outputFormat: {
-                type: 'string',
-                enum: ['json', 'text'],
-                description: 'Output format (default: json)',
-                default: 'json',
-              },
-              dryRun: {
-                type: 'boolean',
-                description: 'Test command generation without execution (default: false)',
-                default: false,
-              },
-            },
-            required: ['target'],
-          },
+  private setupTools(): void {
+    // Register the scan tool
+    this.server.registerTool(
+      'scan',
+      {
+        title: 'Nikto Scan',
+        description: 'Run a Nikto scan against a target',
+        inputSchema: {
+          target: z.string().describe('Target URL or IP address to scan'),
+          port: z.number().int().min(1).max(65535).optional().default(80).describe('Port number (default: 80)'),
+          ssl: z.boolean().optional().default(false).describe('Use SSL/HTTPS (default: false)'),
+          nossl: z.boolean().optional().default(false).describe('Disable SSL (default: false)'),
+          nolookup: z.boolean().optional().default(false).describe('Disable DNS lookups (default: false)'),
+          timeout: z.number().positive().optional().default(3600).describe('Scan timeout in seconds (default: 3600)'),
+          vhost: z.string().optional().describe('Virtual host for the Host header'),
+          outputFormat: z.enum(['json', 'text']).optional().default('json').describe('Output format (default: json)'),
+          dryRun: z.boolean().optional().default(false).describe('Test command generation without execution (default: false)'),
         },
-        {
-          name: 'scan_status',
-          description: 'Get the status of a running scan',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              scanId: {
-                type: 'string',
-                description: 'ID of the scan to check',
-              },
-            },
-            required: ['scanId'],
-          },
-        },
-        {
-          name: 'stop_scan',
-          description: 'Stop a running scan',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              scanId: {
-                type: 'string',
-                description: 'ID of the scan to stop',
-              },
-            },
-            required: ['scanId'],
-          },
-        },
-      ],
-    }));
-
-    // List available resources
-    this.server.setRequestHandler(ListResourcesRequestSchema, async () => ({
-      resources: [
-        {
-          uri: 'nikto://scans',
-          name: 'Active Scans',
-          description: 'List of currently active Nikto scans',
-          mimeType: 'application/json',
-        },
-        {
-          uri: 'nikto://config',
-          name: 'Nikto Configuration',
-          description: 'Current Nikto MCP server configuration',
-          mimeType: 'application/json',
-        },
-      ],
-    }));
-
-    // Handle resource requests
-    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-      const { uri } = request.params;
-
-      switch (uri) {
-        case 'nikto://scans':
+      },
+      async (args) => {
+        try {
+          const options = validateScanOptions(args);
+          const result = await this.niktoService.startScan(options);
           return {
-            contents: [
+            content: [
               {
-                uri,
-                mimeType: 'application/json',
-                text: JSON.stringify(this.niktoService.getActiveScans(), null, 2),
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
               },
             ],
           };
-
-        case 'nikto://config':
-          return {
-            contents: [
-              {
-                uri,
-                mimeType: 'application/json',
-                text: JSON.stringify(
-                  {
-                    version: config.version,
-                    niktoBinary: config.niktoBinary,
-                    maxConcurrentScans: config.maxConcurrentScans,
-                    defaultTimeout: config.defaultTimeout,
-                  },
-                  null,
-                  2,
-                ),
-              },
-            ],
-          };
-
-        default:
-          throw new McpError(ErrorCode.InvalidRequest, `Unknown resource: ${uri}`);
-      }
-    });
-
-    // Handle tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
-
-      try {
-        switch (name) {
-          case 'scan': {
-            const options = validateScanOptions(args as unknown);
-            const result = await this.niktoService.startScan(options);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(result, null, 2),
-                },
-              ],
-            };
-          }
-
-          case 'scan_status': {
-            const { scanId } = args as { scanId: string };
-            const status = this.niktoService.getScanStatus(scanId);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(status, null, 2),
-                },
-              ],
-            };
-          }
-
-          case 'stop_scan': {
-            const { scanId } = args as { scanId: string };
-            await this.niktoService.stopScan(scanId);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify({ success: true, scanId }, null, 2),
-                },
-              ],
-            };
-          }
-
-          default:
-            throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
+        } catch (error) {
+          logger.error('Scan tool execution error:', error);
+          throw error;
         }
-      } catch (error) {
-        logger.error('Tool execution error:', error);
-        throw error instanceof McpError
-          ? error
-          : new McpError(
-              ErrorCode.InternalError,
-              error instanceof Error ? error.message : 'Unknown error',
-            );
       }
-    });
+    );
+
+    // Register the scan_status tool
+    this.server.registerTool(
+      'scan_status',
+      {
+        title: 'Scan Status',
+        description: 'Get the status of a running scan',
+        inputSchema: {
+          scanId: z.string().describe('ID of the scan to check'),
+        },
+      },
+      async ({ scanId }) => {
+        try {
+          const status = this.niktoService.getScanStatus(scanId);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(status, null, 2),
+              },
+            ],
+          };
+        } catch (error) {
+          logger.error('Scan status tool execution error:', error);
+          throw error;
+        }
+      }
+    );
+
+    // Register the stop_scan tool
+    this.server.registerTool(
+      'stop_scan',
+      {
+        title: 'Stop Scan',
+        description: 'Stop a running scan',
+        inputSchema: {
+          scanId: z.string().describe('ID of the scan to stop'),
+        },
+      },
+      async ({ scanId }) => {
+        try {
+          await this.niktoService.stopScan(scanId);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify({ success: true, scanId }, null, 2),
+              },
+            ],
+          };
+        } catch (error) {
+          logger.error('Stop scan tool execution error:', error);
+          throw error;
+        }
+      }
+    );
+  }
+
+  private setupResources(): void {
+    // Register the scans resource
+    this.server.registerResource(
+      'scans',
+      'nikto://scans',
+      {
+        title: 'Active Scans',
+        description: 'List of currently active Nikto scans',
+      },
+      async () => ({
+        contents: [
+          {
+            uri: 'nikto://scans',
+            mimeType: 'application/json',
+            text: JSON.stringify(this.niktoService.getActiveScans(), null, 2),
+          },
+        ],
+      })
+    );
+
+    // Register the config resource
+    this.server.registerResource(
+      'config',
+      'nikto://config',
+      {
+        title: 'Nikto Configuration',
+        description: 'Current Nikto MCP server configuration',
+      },
+      async () => ({
+        contents: [
+          {
+            uri: 'nikto://config',
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                version: config.version,
+                niktoBinary: config.niktoBinary,
+                maxConcurrentScans: config.maxConcurrentScans,
+                defaultTimeout: config.defaultTimeout,
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      })
+    );
   }
 
   async start(): Promise<void> {
