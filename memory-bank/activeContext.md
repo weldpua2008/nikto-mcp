@@ -4,13 +4,13 @@
 - **COMPLETE**: Full MCP server implementation with stdin/JSON-RPC support
 - **COMPLETE**: Bootstrap `index.cjs` with compiled/TypeScript fallback (FIXED ES Module issue)
 - **COMPLETE**: Core MCP functionality with enhanced scan tool
-- **COMPLETE**: Comprehensive test suite implemented and passing (29 tests, all green)
+- **COMPLETE**: Comprehensive test suite implemented and passing (39 tests, all green)
 - **COMPLETE**: Extended Nikto options support (nolookup, nossl, ssl, port, timeout, vhost)
 - **COMPLETE**: MCP Inspector compatibility verified and fixed
 - **COMPLETE**: MCP communication protocol issues resolved
 - **COMPLETE**: Docker mode JSON output fix implemented and verified
 - **COMPLETE**: Test & Lint & Coverage - All Green Achievement (January 14, 2025)
-  - Tests: 29/29 passing ✅
+  - Tests: 39/39 passing ✅
   - Lint: 0 errors, 1 warning ✅
   - Coverage: 48.66% overall, utils/logger 100%, types 100%, validators 93.1% ✅
 - **COMPLETE**: NPX Compatibility Fix - ES Module Error Resolution (v0.1.2)
@@ -29,6 +29,22 @@
   - Fixed: Skips npm prepare script during production build (--ignore-scripts)
   - Fixed: Copies correct file (index.cjs) instead of index.js
   - Result: Docker build now succeeds and creates functional nikto-mcp:latest image
+- **COMPLETE**: Command Line Help Fix - Hanging --help Issue Resolution (v0.4.0+)
+  - Fixed: npx nikto-mcp@latest --help command was hanging indefinitely
+  - Root Cause: Application was starting MCP server without checking command-line arguments
+  - Solution: Added argument parsing before server initialization
+  - Implementation: handleCommandLineArgs() function to process --help and --version flags
+  - Result: --help displays comprehensive usage information and exits cleanly
+  - Result: --version displays version information and exits cleanly
+  - Verified: All 39 tests still passing after changes
+- **COMPLETE**: TypeScript MCP Client Examples Implementation (February 8, 2025)
+  - Created: `examples/` folder with comprehensive MCP client examples
+  - Added: `examples/mcp-client.ts` - TypeScript MCP client using official SDK
+  - Added: `examples/simple-mcp-client.js` - Working JavaScript client using raw JSON-RPC
+  - Added: `examples/README.md` - Comprehensive documentation and usage guide
+  - Features: Server connection, tool discovery, resource access, tool invocation
+  - Safety: All examples use dry run mode to prevent actual network scans
+  - Documentation: Complete setup instructions, troubleshooting, and API examples
 
 ## Recent Changes
 - **CRITICAL FIX**: Fixed info logs appearing as "Error output from MCP server" (2025-01-17)
